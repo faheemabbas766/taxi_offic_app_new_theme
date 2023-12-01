@@ -62,10 +62,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   late BuildContext myContext;
 
   _loadNextScreen() async {
-    if (!mounted) return;
+    if (mounted) return;
     constance.allTextData = AllTextData.fromJson(json.decode(await DefaultAssetBundle.of(myContext).loadString("jsonFile/languagetext.json")));
-
-    await Future.delayed(const Duration(milliseconds: 1000));
     Navigator.pushReplacementNamed(context, Routes.ENABLELOCATION);
   }
 

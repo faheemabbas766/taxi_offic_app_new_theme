@@ -1,18 +1,20 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../documentManagement/docManagementScreen.dart';
 import '../drawer/drawer.dart';
 import '../appTheme.dart';
 import '../Language/appLocalizations.dart';
+import '../vehicalManagement/vehicalmanagementScreen.dart';
 
 class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
   @override
   _NotificationScreenState createState() => _NotificationScreenState();
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
         child: Drawer(
           child: AppDrawer(
-            selectItemName: 'Notification',
+            selectItemName: 'Vehicles',
           ),
         ),
       ),
@@ -53,7 +55,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
             Expanded(
               child: Text(
-                AppLocalizations.of('Notifications'),
+                AppLocalizations.of('Vehicles'),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.titleLarge!.color,
@@ -76,321 +78,122 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 SizedBox(
                   height: 16,
                 ),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
+
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const VehicleManagement(),
+                      ),
+                    );
+                  },
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
                     child: Row(
                       children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: HexColor("#4252FF"),
-                          radius: 24,
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Colors.white,
+                        Container(
+                          height: 26,
+                          width: 26,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: HexColor("#FF9503"),
                           ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              AppLocalizations.of('System'),
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              AppLocalizations.of('Booking #1234 has been succsess.'),
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
-                ),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: HexColor("#FED428"),
-                          radius: 24,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 2),
-                              child: Icon(
-                                FontAwesomeIcons.ticketAlt,
-                                size: 22,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              AppLocalizations.of('Promotion'),
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              AppLocalizations.of('Invite friends-GEt 3 coupens each!'),
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
-                ),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: HexColor("#FED428"),
-                          radius: 24,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 2),
-                              child: Icon(
-                                FontAwesomeIcons.ticketAlt,
-                                size: 22,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              AppLocalizations.of('Promotion'),
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              AppLocalizations.of('Invite friends-GEt 3 coupens each!'),
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
-                ),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: HexColor("#F52C56"),
-                          radius: 24,
-                          child: Center(
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 12,
-                              child: Icon(
-                                Icons.close,
-                                size: 20,
-                                color: HexColor("#F52C56"),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              AppLocalizations.of('System'),
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              AppLocalizations.of('Booking #156 has been cancelled.'),
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
-                ),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: HexColor("#4BE4B0"),
-                          radius: 24,
-                          child: Center(
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
                             child: Icon(
-                              FontAwesomeIcons.wallet,
-                              size: 22,
+                              FontAwesomeIcons.car,
+                              size: 18,
                               color: Colors.white,
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 16,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              AppLocalizations.of('System'),
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              AppLocalizations.of('Thank you Your transaction is done'),
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                              overflow: TextOverflow.clip,
-                            ),
-                          ],
-                        )
+                        Text(
+                          AppLocalizations.of('vehicle Management'),
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.titleLarge!.color,
+                          ),
+                        ),
+                        const Expanded(child: SizedBox()),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 18,
+                          color: Theme.of(context).disabledColor,
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Container(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
+                Padding(
+                  padding: const EdgeInsets.only(left: 60),
+                  child: Container(
+                    height: 1,
+                    color: Theme.of(context).dividerColor,
+                  ),
                 ),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DocmanagementScreen(),
+                      ),
+                    );
+                  },
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
                     child: Row(
                       children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: HexColor("#FED428"),
-                          radius: 24,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 2),
-                              child: Icon(
-                                FontAwesomeIcons.ticketAlt,
-                                size: 22,
-                                color: Colors.black,
-                              ),
+                        Container(
+                          height: 26,
+                          width: 26,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: HexColor("#4BDA65"),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              FontAwesomeIcons.idCard,
+                              color: Colors.white,
+                              size: 16,
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 16,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              AppLocalizations.of('Promotion'),
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              AppLocalizations.of('Invite friends-GEt 3 coupens each!'),
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        )
+                        Text(
+                          AppLocalizations.of('Document Management'),
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.titleLarge!.color,
+                          ),
+                        ),
+                        Expanded(child: SizedBox()),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 18,
+                          color: Theme.of(context).disabledColor,
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Container(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
+                Padding(
+                  padding: const EdgeInsets.only(left: 60),
+                  child: Container(
+                    height: 1,
+                    color: Theme.of(context).dividerColor,
+                  ),
                 ),
               ],
             ),

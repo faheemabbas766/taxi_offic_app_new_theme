@@ -206,21 +206,89 @@ class _MyProfileState extends State<MyProfile> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              AppLocalizations.of('Username'),
+                              AppLocalizations.of('First Name'),
                               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
                             ),
                             Expanded(child: SizedBox()),
                             Text(
-                              'Martha Banks',
+                              'Faheem',
                               style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).disabledColor,
-                                  ),
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
                             ),
                             SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Last Name'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              'Abbas',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Driver Call Sign:'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              '22',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            const SizedBox(
                               width: 4,
                             ),
                             Icon(
@@ -344,17 +412,17 @@ class _MyProfileState extends State<MyProfile> {
                             Text(
                               AppLocalizations.of('Birthday'),
                               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
                             ),
                             Expanded(child: SizedBox()),
                             Text(
                               'April 16,1988',
                               style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).disabledColor,
-                                  ),
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
                             ),
                             SizedBox(
                               width: 4,
@@ -367,6 +435,245 @@ class _MyProfileState extends State<MyProfile> {
                           ],
                         ),
                       ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('NI Number'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              'ABC~123',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Address'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              'ABC~123',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Postal Code'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              '44000',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Home Tel No'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              '42323232',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Driving Licence No & Exp'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              'ABC~123 23 oct 2024',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Phv Badge No & Expiry'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              '',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of('Passport No & Expiry'),
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                            ),
+                            Expanded(child: SizedBox()),
+                            Text(
+                              'ABC~123',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).disabledColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      ),
+
                       Container(
                         height: 1,
                         color: Theme.of(context).dividerColor,
@@ -807,7 +1114,6 @@ class _MyProfileState extends State<MyProfile> {
     }
     MyApp.setCustomTheme(context, 5);
   }
-
   int light = 1;
   int dark = 2;
 

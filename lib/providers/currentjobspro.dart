@@ -8,7 +8,7 @@ class CurrentJobsPro with ChangeNotifier {
   void clearAll() {
     isloaded = false;
     jobs = [];
-    notifyListeners();
+    // notifyListeners();
   }
 
   notifyListenerz() {

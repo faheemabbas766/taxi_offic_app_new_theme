@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../Api & Routes/routes.dart';
-import '../home/userDetail.dart';
+import '../drawer/drawer.dart';
 import 'completedjobs.dart';
 import 'currentjobs.dart';
 import 'pendingjobs.dart';
@@ -29,41 +29,44 @@ class _JobViewState extends State<JobView> {
   @override
   Widget build(BuildContext context) {
     RouteManager.context=context;
-    return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.red, // Replace with your desired color
-          title: const Text(
-            "Jobs View",
-            style: TextStyle(fontSize: 20), // Adjust the font size as needed
+    return Scaffold(
+      drawer: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
+        child: const Drawer(
+          child: AppDrawer(
+            selectItemName: 'Jobs',
           ),
         ),
-        body: SafeArea(
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            bottomNavigationBar: BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.work),
-                  label: "Current Job",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.info),
-                  label: "Future Job",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.check),
-                  label: "Completed Job",
-                ),
-              ],
-              currentIndex: _currentIndex,
-              onTap: _onTabTapped,
-            ),
-            body: _tabs[_currentIndex],
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.red, // Replace with your desired color
+        title: const Text(
+          "Jobs View",
+          style: TextStyle(fontSize: 20), // Adjust the font size as needed
+        ),
+      ),
+      body: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          bottomNavigationBar: BottomNavigationBar(
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.work),
+                label: "Current Job",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.info),
+                label: "Future Job",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.check),
+                label: "Completed Job",
+              ),
+            ],
+            currentIndex: _currentIndex,
+            onTap: _onTabTapped,
           ),
+          body: _tabs[_currentIndex],
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:provider/provider.dart';
 import 'package:taxi_app/Api & Routes/api.dart';
 import 'package:taxi_app/Api & Routes/routes.dart';
@@ -6,11 +7,9 @@ import 'package:taxi_app/presentation/home/userDetail.dart';
 import 'package:taxi_app/providers/currentjobspro.dart';
 import 'package:taxi_app/providers/homepro.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:velocity_x/velocity_x.dart';
-import '../../Entities/jobsobject.dart';
+import '../Language/appLocalizations.dart';
+import '../constance/constance.dart';
 import '../providers/themepro.dart';
-
-List<JobObject> currentJobs = [];
 class CurrentJobs extends StatefulWidget {
   const CurrentJobs({super.key});
   @override
@@ -18,25 +17,27 @@ class CurrentJobs extends StatefulWidget {
 }
 
 class _CurrentJobsState extends State<CurrentJobs> {
-  bool isLoading = true;
   @override
   void initState() {
     super.initState();
-    fetchData();
+    getMyCurrentJobs();
   }
-  Future<void> fetchData() async {
-    await getMyCurrentJobs();
-    setState(() {
-      isLoading = false;
-    });
-}
-  Future<void> getMyCurrentJobs() async {
-    while (true) {
-      print('helowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-      final homePro = Provider.of<HomePro>(context, listen: false);
-      final val = await API.getCurrentJobs(homePro.userid, context);
-      if (val) {
-        break;
+
+  getMyCurrentJobs() async {
+    if (mounted) {
+      while (true) {
+        Provider.of<CurrentJobsPro>(context, listen: false).isloaded = false;
+        Provider.of<CurrentJobsPro>(context, listen: false).notifyListenerz();
+        var val = await API.getCurrentJobs(Provider.of<HomePro>(context, listen: false).userid, context);
+        if( Provider.of<CurrentJobsPro>(context, listen: false).jobs.isNotEmpty){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UserDetailScreen(
+              item: Provider.of<CurrentJobsPro>(context, listen: false).jobs[0])));
+        }
+        if (val) {
+          Provider.of<CurrentJobsPro>(context, listen: false).isloaded = true;
+          Provider.of<CurrentJobsPro>(context, listen: false).notifyListenerz();
+          break;
+        }
       }
     }
   }
@@ -52,10 +53,10 @@ class _CurrentJobsState extends State<CurrentJobs> {
 
   @override
   Widget build(BuildContext context) {
-    RouteManager.context=context;
     return Scaffold(
       backgroundColor: AppColors.of(context).secondaryDimColor,
-      body: isLoading ? currentJobs.isEmpty
+      body: Provider.of<CurrentJobsPro>(context).isloaded
+          ? Provider.of<CurrentJobsPro>(context).jobs.isEmpty
           ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -70,6 +71,10 @@ class _CurrentJobsState extends State<CurrentJobs> {
             SizedBox(height: RouteManager.width / 23),
             InkWell(
               onTap: () async {
+                Provider.of<CurrentJobsPro>(context, listen: false)
+                    .isloaded = false;
+                Provider.of<CurrentJobsPro>(context, listen: false)
+                    .notifyListenerz();
                 await getMyCurrentJobs();
               },
               child: Text(
@@ -90,191 +95,245 @@ class _CurrentJobsState extends State<CurrentJobs> {
         ),
         child: ListView.builder(
           itemCount: Provider.of<CurrentJobsPro>(context).jobs.length,
-          itemBuilder: (cont, index) {
-            return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UserDetailScreen(
-                        item: Provider.of<CurrentJobsPro>(context).jobs[0])),
-                );
-              },
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: RouteManager.width / 80,
-                  ),
-                  Card(
-                    color: AppColors.of(context).primaryColor,
-                    child: Stack(
-                      children: [
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: RouteManager.width / 20,
+          itemBuilder: (context, index) {
+            var item = Provider.of<CurrentJobsPro>(context).jobs[index];
+            return Column(
+              children:[
+                Padding(
+                  padding: EdgeInsets.only(right: 6, left: 6),
+                  child: InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserDetailScreen(item: item),),);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadiusDirectional.circular(16),
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
                             ),
-                            Container(
-                              color: AppColors.of(context).secondaryColor,
-                              width: RouteManager.width / 300,
-                              height: RouteManager.width / 3,
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: RouteManager.width / 6.4,
-                            ),
-                            80.heightBox,
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              children: [
-                                5.widthBox,
-                                Image.asset(
-                                  'assets/money.png',
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "${Provider.of<CurrentJobsPro>(context).jobs[index].total_amount} £",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color.fromARGB(
-                                        255, 47, 150, 44),
-                                    fontSize:
-                                    RouteManager.width / 20,
+                            child: Padding(
+                              padding: const EdgeInsets.all(14),
+                              child: Row(
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.asset(
+                                      ConstanceData.user8,
+                                      height: 50,
+                                      width: 50,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                    width: RouteManager.width / 80),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 5,
-                                    vertical: 5,
+                                  const SizedBox(
+                                    width: 8,
                                   ),
-                                  child: Icon(Icons.person),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  Provider.of<CurrentJobsPro>(
-                                      context)
-                                      .jobs[index]
-                                      .name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize:
-                                    RouteManager.width / 23,
-                                    color: AppColors.of(context).secondaryColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height: RouteManager.width / 30),
-                            Stack(
-                              children: [
-                                SizedBox(
-                                    width: RouteManager.width / 30),
-                                Icon(
-                                  Icons.location_on_outlined,
-                                  color: Colors.red,
-                                  size: RouteManager.width / 16,
-                                ),
-                                Row(
-                                  children: [
-                                    SizedBox(width: RouteManager.width / 14),
-                                    SizedBox(width: RouteManager.width / 1.51,
-                                      child: Text(
-                                        Provider.of<CurrentJobsPro>(
-                                            context,
-                                            listen: false)
-                                            .jobs[index]
-                                            .dropaddress,
-                                        style: TextStyle(
-                                          fontWeight:
-                                          FontWeight.bold,
-                                          color: AppColors.of(context).secondaryColor,
-                                          fontSize: 14,
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        AppLocalizations.of(item.name),
+                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
                                         ),
-                                        maxLines: 2,
-                                        overflow:
-                                        TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      const SizedBox(
+                                        height: 4,
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 24,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.all(
+                                                Radius.circular(15),
+                                              ),
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                AppLocalizations.of(item.phn),
+                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          Container(
+                                            height: 24,
+                                            width: 74,
+                                            decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.all(
+                                                Radius.circular(15),
+                                              ),
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                AppLocalizations.of(item.paymentmethod),
+                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  const Expanded(
+                                    child: SizedBox(),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(
+                                        '\$${item.total_amount}',
+                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
+                                      ),
+                                      Text('${item.distance}km',
+                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                          color: Theme.of(context).disabledColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(height: RouteManager.width / 40),
-                            SizedBox(height: RouteManager.width / 60,
-                            ),
-                            Stack(
-                              children: [
-                                SizedBox(width: RouteManager.width / 30),
-                                Icon(
-                                  Icons.location_on_outlined,
-                                  color: Colors.green,
-                                  size: RouteManager.width / 16,
-                                ),
-                                Row(
-                                  children: [
-                                    SizedBox(width: RouteManager.width / 14),
+                          ),
+                          Container(
+                            height: 1,
+                            width: MediaQuery.of(context).size.width,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+                            child: Row(
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
                                     Text(
-                                      Provider.of<CurrentJobsPro>(
-                                          context,
-                                          listen: false)
-                                          .jobs[index]
-                                          .pickupadress,
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: AppColors.of(context).secondaryColor,
-                                        fontSize:14,
+                                      AppLocalizations.of('PICKUP'),
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      maxLines: 2,
-                                      overflow:
-                                      TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(item.pickupadress),
+                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                            SizedBox(height: RouteManager.width / 500),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 14, left: 14),
+                            child: Container(
+                              height: 1,
+                              width: MediaQuery.of(context).size.width,
+                              color: Theme.of(context).dividerColor,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+                            child: Row(
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      AppLocalizations.of('DROP OFF'),
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(item.dropaddress),
+                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 1,
+                            width: MediaQuery.of(context).size.width,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      12.widthBox,
-                      Image.asset("assets/Line.png"),
-                    ],
+                ),
+                const SizedBox(height: 16,),
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserDetailScreen(
+                        item: Provider.of<CurrentJobsPro>(context, listen: false).jobs[0])));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 14, left: 14, top: 16),
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of('Open'),
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: ConstanceData.secoundryFontColor,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
             );
           },
         ),
-      ) : const Center(child: CircularProgressIndicator()),
+      )
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }

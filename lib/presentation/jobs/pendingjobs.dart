@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:provider/provider.dart';
 import '../../Api & Routes/api.dart';
 import '../../Api & Routes/routes.dart';
@@ -26,47 +27,26 @@ class _PendingJobsState extends State<PendingJobs> {
   Future<void> loadData() async {
     await getMyPendingJobs();
     isLoading = false;
-    setState(() {
-
-    });
+    setState(() {});
   }
   getMyPendingJobs() async {
-    await API.getPendingJobs(Provider.of<HomePro>(context, listen: false).userid, context);
+    if(mounted){
+      while (true) {
+        var val = await API.getPendingJobs(
+            Provider.of<HomePro>(context, listen: false).userid,context);
+        if (val) {
+          break;
+        }
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {
     RouteManager.context=context;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: isLoading
-          ? pendingJobs.isEmpty
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "No Jobs Taken Yet",
-              style: TextStyle(
-                fontSize: RouteManager.width / 20,
-                color: const Color.fromARGB(255, 54, 54, 54),
-              ),
-            ),
-            SizedBox(height: RouteManager.width / 23),
-            InkWell(
-              onTap: () async {
-              },
-              child: Text(
-                "Tap Here to Refresh",
-                style: TextStyle(
-                  fontSize: RouteManager.width / 18,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-          ],
-        ),
-      )
-          : Column(
+      body:isLoading? const Center(child: CircularProgressIndicator(),)
+          :Column(
         children:[
           const SizedBox(
             height: 10,
@@ -280,6 +260,19 @@ class _PendingJobsState extends State<PendingJobs> {
                     ),
                     const SizedBox(height: 16,),
                     InkWell(
+
+                      onTap: () async {
+                        API.showLoading("", context);
+                        API.respondToBooking(item.bookid,
+                            2, context).then((value) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          Navigator.of(context, rootNavigator: true).pop();
+                          Navigator.of(context)
+                              .pushNamed(Routes.JOBS);
+                        },
+                        );
+                        await FlutterRingtonePlayer.play(fromAsset: 'assets/accept_tone.mp3');
+                      },
                       child: Padding(
                         padding: EdgeInsets.only(right: 14, left: 14, top: 16),
                         child: Container(
@@ -312,7 +305,7 @@ class _PendingJobsState extends State<PendingJobs> {
             height: MediaQuery.of(context).padding.bottom + 16,
           )
         ],
-      ) : const Center(child: CircularProgressIndicator()),
+      )
     );
   }
 }

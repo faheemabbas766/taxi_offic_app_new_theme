@@ -323,7 +323,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 splashColor: Colors.transparent,
                 onTap: () {
                   Navigator.pop(context);
-                  if (widget.selectItemName != 'Profile') {
+                  if (widget.selectItemName != 'Account') {
                     Navigator.pushNamedAndRemoveUntil(context, Routes.HISTORY,
                         (Route<dynamic> route) => false);
                   }
@@ -332,13 +332,13 @@ class _AppDrawerState extends State<AppDrawer> {
                   padding: const EdgeInsets.only(left: 4),
                   child: Row(
                     children: <Widget>[
-                      widget.selectItemName == 'Profile'
+                      widget.selectItemName == 'Account'
                           ? selectedData()
-                          : SizedBox(),
+                          : const SizedBox(),
                       Icon(
                         FontAwesomeIcons.history,
                         size: 20,
-                        color: widget.selectItemName == 'Profile'
+                        color: widget.selectItemName == 'Account'
                             ? Theme.of(context).primaryColor
                             : Theme.of(context).dividerColor,
                       ),
@@ -346,7 +346,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         width: 10,
                       ),
                       Text(
-                        AppLocalizations.of('Profile'),
+                        AppLocalizations.of('Account'),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                               color:
@@ -357,7 +357,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
               InkWell(
@@ -365,7 +365,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 splashColor: Colors.transparent,
                 onTap: () {
                   Navigator.pop(context);
-                  if (widget.selectItemName != 'Vehicle') {
+                  if (widget.selectItemName != 'Vehicles') {
                     Navigator.pushNamedAndRemoveUntil(context,
                         Routes.NOTIFICATION, (Route<dynamic> route) => false);
                   }
@@ -374,17 +374,17 @@ class _AppDrawerState extends State<AppDrawer> {
                   padding: const EdgeInsets.only(left: 4),
                   child: Row(
                     children: <Widget>[
-                      widget.selectItemName == 'Vehicle'
+                      widget.selectItemName == 'Vehicles'
                           ? selectedData()
-                          : SizedBox(),
+                          : const SizedBox(),
                       Icon(
                         FontAwesomeIcons.solidBell,
                         size: 20,
-                        color: widget.selectItemName == 'Vehicle'
+                        color: widget.selectItemName == 'Vehicles'
                             ? Theme.of(context).primaryColor
                             : Theme.of(context).dividerColor,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
@@ -399,7 +399,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
               InkWell(
@@ -418,7 +418,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     children: <Widget>[
                       widget.selectItemName == 'Invite'
                           ? selectedData()
-                          : SizedBox(),
+                          : const SizedBox(),
                       Icon(
                         FontAwesomeIcons.gifts,
                         size: 20,
@@ -430,7 +430,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         width: 10,
                       ),
                       Text(
-                        AppLocalizations.of('Reports'),
+                        AppLocalizations.of('Account'),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                               color:

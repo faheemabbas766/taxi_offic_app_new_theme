@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:taxi_app/presentation/vehicalManagement/addVehicalScreen.dart';
 import '../../Api & Routes/api.dart';
 import '../../providers/homepro.dart';
 import '../../providers/startshiftpro.dart';
@@ -133,6 +134,12 @@ class _VehicalManagementState extends State<VehicleManagement> {
             );
           },
         ),
+      ),
+      floatingActionButton:FloatingActionButton(
+          child: Icon(Icons.add), backgroundColor: Theme.of(context).primaryColor,
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddNewVehicle(),));
+          }
       ),
     );
   }

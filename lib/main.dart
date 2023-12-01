@@ -19,7 +19,6 @@ import 'package:taxi_app/providers/homepro.dart';
 import 'package:taxi_app/providers/pendingjobspro.dart';
 import 'package:taxi_app/providers/startshiftpro.dart';
 import 'package:taxi_app/providers/themepro.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'Api & Routes/api.dart';
 import 'Api & Routes/routes.dart';
 import 'firebase_options.dart';
@@ -27,361 +26,401 @@ import 'providers/completedjobspro.dart';
 import 'providers/currentjobspro.dart';
 import 'providers/pobmappro.dart';
 import 'providers/tripdetailspro.dart';
-import 'package:intl/intl.dart';
 
 Widget _showMessage(BuildContext context, message) {
-  var bootmPadding = MediaQuery.of(context).padding.bottom;
-  return Padding(
-    padding: EdgeInsets.only(right: 10, left: 10, bottom: bootmPadding),
-    child: Stack(
-      alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        Positioned(
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 16,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 24, left: 24),
-            child: Animator<Offset>(
-              tween: Tween<Offset>(
-                begin: Offset(0, 0.5),
-                end: Offset(0, 0),
+  return Material(
+    type: MaterialType.transparency,
+    child: Padding(
+      padding: EdgeInsets.only(top:200,right: 10, left: 10, bottom: MediaQuery.of(context).padding.bottom),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          Positioned(
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 16,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 24, left: 24),
+              child: Animator<Offset>(
+                tween: Tween<Offset>(
+                  begin: const Offset(0, 0.5),
+                  end: const Offset(0, 0),
+                ),
+                duration: const Duration(seconds: 1),
+                cycles: 1,
+                builder: (context, animate, _) => SlideTransition(
+                  position: animate.animation,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              duration: Duration(seconds: 1),
-              cycles: 1,
-              builder: (context, animate, _) => SlideTransition(
-                position: animate.animation,
+            ),
+          ),
+          Positioned(
+            top: 12,
+            right: 0,
+            left: 0,
+            bottom: 16,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12, left: 12),
+              child: Animator<Offset>(
+                tween: Tween<Offset>(
+                  begin: const Offset(0, 0.5),
+                  end: const Offset(0, 0),
+                ),
+                duration: const Duration(milliseconds: 700),
+                cycles: 1,
+                builder: (context, animate, _) => SlideTransition(
+                  position: animate.animation,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Animator<Offset>(
+            tween: Tween<Offset>(
+              begin: Offset(0, 0.4),
+              end: Offset(0, 0),
+            ),
+            duration: const Duration(milliseconds: 700),
+            cycles: 1,
+            builder: (context, animate, _) => SlideTransition(
+              position: animate.animation,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
-                        blurRadius: 12,
+                        color: Theme.of(context).dividerColor,
+                        blurRadius: 4,
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          top: 12,
-          right: 0,
-          left: 0,
-          bottom: 16,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 12, left: 12),
-            child: Animator<Offset>(
-              tween: Tween<Offset>(
-                begin: Offset(0, 0.5),
-                end: Offset(0, 0),
-              ),
-              duration: Duration(milliseconds: 700),
-              cycles: 1,
-              builder: (context, animate, _) => SlideTransition(
-                position: animate.animation,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      new BoxShadow(
-                        color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
-                        blurRadius: 6,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Animator<Offset>(
-          tween: Tween<Offset>(
-            begin: Offset(0, 0.4),
-            end: Offset(0, 0),
-          ),
-          duration: const Duration(milliseconds: 700),
-          cycles: 1,
-          builder: (context, animate, _) => SlideTransition(
-            position: animate.animation,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).dividerColor,
-                      blurRadius: 4,
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                ConstanceData.userImage,
-                                height: 40,
-                                width: 40,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: const EdgeInsets.all(14),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const SizedBox(
+                                width: 8,
                               ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  AppLocalizations.of('Esther Berry'),
-                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    AppLocalizations.of("${jsonDecode(message.data['Customer_Detail'])["CUS_NAME"]}"),
+                                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).textTheme.titleLarge!.color,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 24,
-                                      width: 74,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(15),
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 24,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(15),
+                                          ),
+                                          color: Theme.of(context).primaryColor,
                                         ),
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          AppLocalizations.of('ApplePay'),
-                                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: ConstanceData.secoundryFontColor,
+                                        child: Center(
+                                          child: Text(
+                                            AppLocalizations.of("Ph# ${jsonDecode(message.data['Customer_Detail'])["CUS_PHONE"]}"),
+                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: ConstanceData.secoundryFontColor,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Container(
-                                      height: 24,
-                                      width: 74,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(15),
-                                        ),
-                                        color: Theme.of(context).primaryColor,
+                                      const SizedBox(
+                                        width: 4,
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          AppLocalizations.of('Discount'),
-                                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: ConstanceData.secoundryFontColor,
+                                      Container(
+                                        height: 24,
+                                        width: 74,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(15),
+                                          ),
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            AppLocalizations.of(
+                                                jsonDecode(message.data['booking_detail'])[
+                                                "BM_PAY_METHOD"]
+                                                    .toString() ==
+                                                    "1"
+                                                    ? "Cash"
+                                                    : jsonDecode(message.data['booking_detail'])[
+                                                "BM_PAY_METHOD"]
+                                                    .toString() ==
+                                                    "2"
+                                                    ? "Card"
+                                                    : "Account"),
+                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: ConstanceData.secoundryFontColor,
+                                            ),
                                           ),
                                         ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              const Expanded(
+                                child: SizedBox(),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  Text('${jsonDecode(message.data['booking_detail'])["total_amount"].toString()} £',
+                                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).textTheme.titleLarge!.color,
+                                    ),
+                                  ),
+                                  Text(
+                                    '2.2 km',
+                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      color: Theme.of(context).disabledColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          height: 0.5,
+                          color: Theme.of(context).disabledColor,
+                        ),
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: RouteManager.width / 70),
+                                width: RouteManager.width / 1.5,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: RouteManager.width / 20),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: RouteManager.width / 70),
+                                      width: RouteManager.width / 1.5,
+                                      height: 280,
+                                      child: ListView.builder(
+                                        itemCount: bookingStops.length,
+                                        itemBuilder: (context, index) {
+                                          var bookingStop = bookingStops[index];
+                                          bool isFirstStop = index == 0;
+                                          bool isLastStop =
+                                              index == bookingStops.length - 1;
+
+                                          String title;
+                                          Color
+                                          stopColor; // Define a color for the stop based on your conditions
+                                          Color
+                                          navigationColor; // Define a color for the navigation button based on your conditions
+                                          String address = bookingStop[
+                                          'BD_LOCATION'] ??
+                                              "abc"; // Use an empty string as default
+
+                                          if (isFirstStop) {
+                                            title = "Pick Up";
+
+                                            stopColor = Colors.black;
+                                            navigationColor = Colors.green;
+                                            // Set the navigation button color for the first stop
+                                          } else if (isLastStop) {
+                                            title = "Destination";
+                                            stopColor = Colors.black;
+                                            navigationColor = Colors
+                                                .red; // Set the navigation button color for the last stop
+                                          } else {
+                                            title = "Stop $index";
+                                            stopColor = Colors.black;
+                                            navigationColor = const Color(0xff0038FF);
+                                            // Set the navigation button color for intermediate stops
+                                          }
+                                          return ListTile(
+                                            title: Text(
+                                              title,
+                                              style: TextStyle(
+                                                color: stopColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: RouteManager.width / 25,
+                                              ),
+                                            ),
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  address,
+                                                  style: TextStyle(
+                                                    fontSize: RouteManager.width / 30,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            trailing: IconButton(
+                                              icon: Icon(Icons.navigation_rounded,
+                                                  color:
+                                                  navigationColor), // Use the navigation button color
+                                              onPressed: () {
+                                                if (isLastStop) {
+                                                  var destinationStop = bookingStop;
+                                                  openGoogleMapsNavigationToDestination(
+                                                    double.parse(
+                                                        destinationStop['BD_LAT']),
+                                                    double.parse(
+                                                        destinationStop['BD_LANG']),
+                                                  );
+                                                } else {
+                                                  var startStop = bookingStop;
+                                                  openGoogleMapsNavigationToDestination(
+                                                    double.parse(startStop['BD_LAT']),
+                                                    double.parse(
+                                                        startStop['BD_LANG']),
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          );
+                                        },
                                       ),
                                     )
                                   ],
-                                )
-                              ],
-                            ),
-                            const Expanded(
-                              child: SizedBox(),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Text(
-                                  '\$25.00',
-                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
                                 ),
-                                Text(
-                                  '2.2 km',
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: Theme.of(context).disabledColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Divider(
-                        height: 0.5,
-                        color: Theme.of(context).disabledColor,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 14, left: 14, top: 10, bottom: 10),
-                        child: Row(
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  AppLocalizations.of('PICKUP'),
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: Theme.of(context).disabledColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  AppLocalizations.of('79 Swift Village'),
-                                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        Divider(
+                          height: 0.5,
+                          color: Theme.of(context).disabledColor,
                         ),
-                      ),
-                      Divider(
-                        height: 0.5,
-                        color: Theme.of(context).disabledColor,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 14, left: 14, top: 10, bottom: 10),
-                        child: Row(
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  AppLocalizations.of('DROP OFF'),
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: Theme.of(context).disabledColor,
-                                    fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.only(right: 14, left: 14, top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  API.showLoading("", context);
+                                  API.respondToBooking(
+                                      int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]), 7, context).then((value) async {
+                                      Navigator.of(context, rootNavigator: true).pop();
+                                      Navigator.of(context, rootNavigator: true).pop();
+                                      await FlutterRingtonePlayer.play(fromAsset: 'assets/cancel_tone.wav');
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  height: 32,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Theme.of(context).scaffoldBackgroundColor,
                                   ),
-                                ),
-                                Text(
-                                  AppLocalizations.of('115 William St, Chicago, US'),
-                                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.titleLarge!.color,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 0.5,
-                        color: Theme.of(context).disabledColor,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 14, left: 14, top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            InkWell(
-                              child: Container(
-                                height: 32,
-                                width: 80,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of('Ignore'),
-                                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of('Reject'),
+                                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).disabledColor,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                              onTap: () {
-                                FlutterRingtonePlayer.stop();
-                                API.showLoading("", context);
-                                API
-                                    .respondToBooking(
-                                    jsonDecode(
-                                        message.data['booking_detail'])["BM_SN"],
-                                    7,
-                                    context)
-                                    .then(
-                                      (value) {
-                                    Navigator.of(context, rootNavigator: true).pop();
-                                    Navigator.of(context, rootNavigator: true).pop();
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                FlutterRingtonePlayer.stop();
-                                API.showLoading("", context);
-                                API
-                                    .respondToBooking(
-                                    int.parse(jsonDecode(
-                                        message.data['booking_detail'])["BM_SN"]),
-                                    2,
-                                    context)
-                                    .then(
-                                      (value) {
-                                    Navigator.of(context, rootNavigator: true).pop();
-                                    Navigator.of(context, rootNavigator: true).pop();
-                                    Navigator.of(context)
-                                        .pushNamed(Routes.JOBS);
-                                  },
-                                );
-                              },
-                              child: Container(
-                                height: 32,
-                                width: 80,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of('ACCEPT'),
-                                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: ConstanceData.secoundryFontColor,
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  API.showLoading("", context);
+                                  API.respondToBooking(
+                                      int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]),
+                                      2, context).then((value) {
+                                      Navigator.of(context, rootNavigator: true).pop();
+                                      Navigator.of(context, rootNavigator: true).pop();
+                                      Navigator.of(context)
+                                          .pushNamed(Routes.JOBS);
+                                    },
+                                  );
+                                  await FlutterRingtonePlayer.play(fromAsset: 'assets/accept_tone.mp3');
+                                },
+                                child: Container(
+                                  height: 32,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of('ACCEPT'),
+                                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: ConstanceData.secoundryFontColor,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -434,23 +473,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown,]);
   GenericNotifications.initNotifications();
-  var abcd =
-      await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+  var abcd = await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
   if (abcd!.didNotificationLaunchApp) {
     HomePro.notificationpayload = abcd.notificationResponse!.payload.toString();
   }
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   API.devid = await firebaseMessaging.getToken();
-
-  // await firebaseMessaging.sendMessage(data: {"a":"123"});
   if (kDebugMode) {
     print(
       "SENTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
@@ -472,8 +505,7 @@ void main() async {
   }
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (kDebugMode) {
-      print(
-        "------------------------------------------------------------------------------------------------");
+      print("------------------------------------------------------------------------------------------------");
     }
     if (kDebugMode) {
       print("RECEIVED FOREGROUND MESSAGE.DATA :${message.data}:");
@@ -543,407 +575,21 @@ void main() async {
             .timer!
             .cancel();
         Navigator.of(RouteManager.context!).pushNamedAndRemoveUntil(
-          RouteManager.homepage,
+          Routes.HOME,
           (route) => false,
         );
       });
       return;
     }
     FlutterRingtonePlayer.playNotification();
-    showDialog(
-      context: RouteManager.context!,
-      builder: (cont) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-            ),
-            padding: const EdgeInsets.all(10),
-            width: RouteManager.width,
-            // height: RouteManager.height / 1.4,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: RouteManager.width / 20),
-                  Container(
-                    width: 353,
-                    height: 93,
-                    decoration: BoxDecoration(
-                        color: const Color(0xfffffae6),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                            RouteManager.width / 23,
-                          ),
-                        ),
-                        border: Border.all(color: const Color(0xffFFB900))),
-                    padding: EdgeInsets.all(RouteManager.width / 70),
-                    child: Stack(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .start, // Align children horizontally
-                          crossAxisAlignment: CrossAxisAlignment
-                              .center, // Align children vertically
-                          children: [
-                            Container(
-                              width: RouteManager.width / 8,
-                              height: RouteManager.width / 8,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(30),
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.person,
-                                size: RouteManager.width / 12,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${jsonDecode(message.data['Customer_Detail'])["CUS_NAME"]}",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: RouteManager.width / 22,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "${DateFormat('yyyy-MM-dd').format(DateTime.parse(jsonDecode(message.data['booking_detail'])["BM_DATE"]))}\n${DateFormat('HH:mm:ss').format(DateTime.parse(jsonDecode(message.data['booking_detail'])["BM_DATE"]))}",
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                4.heightBox,
-                                Text(
-                                  "Ph# ${jsonDecode(message.data['Customer_Detail'])["CUS_PHONE"]}",
-                                  // jsonDecode(message.notification!.body!)["customer_detail"]["CUS_PHONE"].toString(),
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: RouteManager.width / 25),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(children: [
-                          SizedBox(
-                            height: RouteManager.width / 10,
-                          ),
-                          SizedBox(
-                            width: RouteManager.width / 7,
-                          ),
-                          const Spacer(),
-                        ])
-                      ],
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: RouteManager.width / 70),
-                          width: RouteManager.width / 1.5,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: RouteManager.width / 20),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: RouteManager.width / 70),
-                                width: RouteManager.width / 1.5,
-                                height: 280,
-                                child: ListView.builder(
-                                  itemCount: bookingStops.length,
-                                  itemBuilder: (context, index) {
-                                    var bookingStop = bookingStops[index];
-                                    bool isFirstStop = index == 0;
-                                    bool isLastStop =
-                                        index == bookingStops.length - 1;
-
-                                    String title;
-                                    Color
-                                        stopColor; // Define a color for the stop based on your conditions
-                                    Color
-                                        navigationColor; // Define a color for the navigation button based on your conditions
-                                    String address = bookingStop[
-                                            'BD_LOCATION'] ??
-                                        "abc"; // Use an empty string as default
-
-                                    if (isFirstStop) {
-                                      title = "Pick Up";
-
-                                      stopColor = Colors.black;
-                                      navigationColor = Colors.green;
-                                      // Set the navigation button color for the first stop
-                                    } else if (isLastStop) {
-                                      title = "Destination";
-                                      stopColor = Colors.black;
-                                      navigationColor = Colors
-                                          .red; // Set the navigation button color for the last stop
-                                    } else {
-                                      title = "Stop $index";
-                                      stopColor = Colors.black;
-                                      navigationColor = const Color(0xff0038FF);
-                                      // Set the navigation button color for intermediate stops
-                                    }
-                                    return ListTile(
-                                      title: Text(
-                                        title,
-                                        style: TextStyle(
-                                          color: stopColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: RouteManager.width / 25,
-                                        ),
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            address,
-                                            style: TextStyle(
-                                              fontSize: RouteManager.width / 30,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      trailing: IconButton(
-                                        icon: Icon(Icons.navigation_rounded,
-                                            color:
-                                                navigationColor), // Use the navigation button color
-                                        onPressed: () {
-                                          if (isLastStop) {
-                                            var destinationStop = bookingStop;
-                                            openGoogleMapsNavigationToDestination(
-                                              double.parse(
-                                                  destinationStop['BD_LAT']),
-                                              double.parse(
-                                                  destinationStop['BD_LANG']),
-                                            );
-                                          } else {
-                                            var startStop = bookingStop;
-                                            openGoogleMapsNavigationToDestination(
-                                              double.parse(startStop['BD_LAT']),
-                                              double.parse(
-                                                  startStop['BD_LANG']),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: const Color(0xfffffae6),
-                        borderRadius:
-                            BorderRadius.circular(RouteManager.width / 40),
-                        border: Border.all(color: const Color(0xffFFB900))),
-                    padding: EdgeInsets.all(
-                      RouteManager.width / 40,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Passengers  ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: RouteManager.width / 25),
-                            ),
-                            Text(
-                                jsonDecode(message.data['booking_detail'])[
-                                        "BM_PASSENGER"]
-                                    .toString(),
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: RouteManager.width / 27),
-                                maxLines: 2),
-                          ],
-                        ),
-                        SizedBox(height: RouteManager.width / 30),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Luggage  ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: RouteManager.width / 25),
-                            ),
-                            Text(
-                              jsonDecode(message.data['booking_detail'])[
-                                      "BM_M_LUGGAE"]
-                                  .toString(),
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: RouteManager.width / 27),
-                              maxLines: 2,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: RouteManager.width / 30),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Payment Method  ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: RouteManager.width / 25),
-                            ),
-                            Text(
-                              jsonDecode(message.data['booking_detail'])[
-                                              "BM_PAY_METHOD"]
-                                          .toString() ==
-                                      "1"
-                                  ? "Cash"
-                                  : jsonDecode(message.data['booking_detail'])[
-                                                  "BM_PAY_METHOD"]
-                                              .toString() ==
-                                          "2"
-                                      ? "Card"
-                                      : "Account",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: RouteManager.width / 27),
-                              maxLines: 2,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: RouteManager.width / 30),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Total Amount  ",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: RouteManager.width / 25),
-                            ),
-                            Text(
-                              "${jsonDecode(message.data['booking_detail'])["total_amount"].toString()} £",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: RouteManager.width / 27),
-                              maxLines: 2,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: RouteManager.width / 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
-                        onPressed: () {
-                          FlutterRingtonePlayer.stop();
-                          API.showLoading("", cont);
-                          API
-                              .respondToBooking(
-                                  int.parse(jsonDecode(
-                                      message.data['booking_detail'])["BM_SN"]),
-                                  2,
-                                  cont)
-                              .then(
-                            (value) {
-                              Navigator.of(cont, rootNavigator: true).pop();
-                              Navigator.of(cont, rootNavigator: true).pop();
-                              Navigator.of(cont)
-                                  .pushNamed(Routes.JOBS);
-                            },
-                          );
-                        },
-                        child: SizedBox(
-                          width: RouteManager.width / 5,
-                          height: RouteManager.width / 8,
-                          child: Center(
-                            child: Text(
-                              "Accept",
-                              style: TextStyle(
-                                fontSize: RouteManager.width / 23,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xffFFB900)),
-                        onPressed: () {
-                          FlutterRingtonePlayer.stop();
-                          API.showLoading("", cont);
-                          API
-                              .respondToBooking(
-                                  jsonDecode(
-                                      message.data['booking_detail'])["BM_SN"],
-                                  7,
-                                  cont)
-                              .then(
-                            (value) {
-                              Navigator.of(cont, rootNavigator: true).pop();
-                              Navigator.of(cont, rootNavigator: true).pop();
-                            },
-                          );
-                        },
-                        child: SizedBox(
-                          width: RouteManager.width / 5,
-                          height: RouteManager.width / 8,
-                          child: Center(
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(
-                                fontSize: RouteManager.width / 23,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+    API.respondToBooking(int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]), 99, RouteManager.context!).then((value){
+        Navigator.of(RouteManager.context!).pushNamed(Routes.JOBS);
       },
     );
-    _showMessage(RouteManager.context!,message);
     if (kDebugMode) {
       print('Handling a foreground message: ${message.messageId}');
       print('Message data: ${message.data}');
-      print(
-          "VEHICLE--------->>>>>>>>>>>>>>>>>>>>>>>${jsonDecode(message.data['vehicle'])["CAR_NAME"]}");
+      print("VEHICLE--------->>>>>>>>>>>>>>>>>>>>>>>${jsonDecode(message.data['vehicle'])["CAR_NAME"]}");
       if (message.notification != null) {
         print('Message notification: ${message.notification?.title}');
         print('Message notification: ${message.notification?.body}');
@@ -957,8 +603,7 @@ void main() async {
         ChangeNotifierProvider<StartShiftPro>(
             create: (_) => StartShiftPro()),
         ChangeNotifierProvider<HomePro>(
-            create: (_) => HomePro()
-            ),
+            create: (_) => HomePro()),
         ChangeNotifierProvider<BottomNavigationPro>(
             create: (_) => BottomNavigationPro()),
         ChangeNotifierProvider<CurrentJobsPro>(
@@ -972,8 +617,7 @@ void main() async {
         ChangeNotifierProvider<PobMapPro>(
             create: (_) => PobMapPro()),
         ChangeNotifierProvider<ThemeModeProvider>(
-          create: (_) => ThemeModeProvider(),
-        ),
+          create: (_) => ThemeModeProvider(),),
       ],
       child: const MyApp(),
     ),

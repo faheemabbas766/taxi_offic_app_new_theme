@@ -46,7 +46,7 @@ class _PickupScreenState extends State<PickupScreen> {
                     color: Theme.of(context).textTheme.titleLarge!.color,
                   ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
           ],

@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/Entities/jobsobject.dart';
 import 'package:taxi_app/Entities/vehicles.dart';
-import 'package:taxi_app/presentation/jobs/currentjobs.dart';
 import 'package:taxi_app/providers/currentjobspro.dart';
 import '../main.dart';
 import '../presentation/jobs/completedjobs.dart';
+import '../presentation/jobs/currentjobs.dart';
 import '../presentation/jobs/pendingjobs.dart';
 import '../providers/completedjobspro.dart';
 import '../providers/homepro.dart';
@@ -273,7 +273,7 @@ class API {
       'Accept': 'application/json',
       'token': Provider.of<HomePro>(context, listen: false).token,
     });
-    request.fields.addAll({'id': userid.toString(), 'status': '2,9,11'});
+    request.fields.addAll({'id': userid.toString(), 'status': '99,2,9,11'});
     http.StreamedResponse response;
     try {
       response = await request.send().timeout(
@@ -296,7 +296,7 @@ class API {
       if (response.statusCode == 200) {
         var res = jsonDecode(responsed.body);
         if (res["status"] == "200") {
-          currentJobs = [];
+          Provider.of<CurrentJobsPro>(context, listen: false).jobs= [];
           for (var i in res["data"]) {
             if (kDebugMode) {
               print("res of I IS : : :$i");
@@ -337,7 +337,7 @@ class API {
                 i["BM_DISTANCE_TIMe"].toString());
             jj.status = int.parse(i["BM_STATUS"]);
             print("STATUS OF CURRENT JOB IS::::::::::::::::::${jj.status}");
-            currentJobs.add(jj);
+            Provider.of<CurrentJobsPro>(context, listen: false).jobs.add(jj);
           }
         }
         print("RESPONSE of Current Job IS : : : : : :$res");

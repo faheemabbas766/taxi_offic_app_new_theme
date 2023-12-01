@@ -44,21 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    loadData();
     if(Provider.of<HomePro>(context, listen: false).shiftid!=-1) {
       setState(() {
         isOffline = true;
       });
     }
   }
-  Future<void> loadData()async{
-   var pos = await Geolocator.getCurrentPosition();
-   lat = pos.latitude;
-   long = pos.longitude;
-   setState(() {
-
-   });
-}
   @override
   Widget build(BuildContext context) {
     RouteManager.context = context;
@@ -172,19 +163,19 @@ class _HomeScreenState extends State<HomeScreen> {
         body: isLoading? const Center(child: CircularProgressIndicator(),)
             :Stack(
           children: <Widget>[
-            GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(lat, long),
-                zoom: 20,
-              ),
-              onMapCreated: (GoogleMapController controller) {
-                mapController = controller;
-                setLDMapStyle();
-              },
-              markers: Set<Marker>.of(getMarkerList(context).values),
-              polylines: Set<Polyline>.of(getPolyLine(context).values),
-            ),
+            // GoogleMap(
+            //   mapType: MapType.normal,
+            //   initialCameraPosition: CameraPosition(
+            //     target: LatLng(lat, long),
+            //     zoom: 20,
+            //   ),
+            //   onMapCreated: (GoogleMapController controller) {
+            //     mapController = controller;
+            //     setLDMapStyle();
+            //   },
+            //   markers: Set<Marker>.of(getMarkerList(context).values),
+            //   polylines: Set<Polyline>.of(getPolyLine(context).values),
+            // ),
             !isOffline
                 ? Column(
                     children: <Widget>[
@@ -206,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      onlineMode(),
                       const Expanded(
                         child: SizedBox(),
                       ),
@@ -213,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      // onLineModeDetail(),
+                      offLineModeDetail(),
                     ],
                   ),
           ],
@@ -662,7 +654,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Theme.of(context).primaryColor,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -960,15 +952,72 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       AppLocalizations.of('You are offline !'),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: ConstanceData.secoundryFontColor,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: ConstanceData.secoundryFontColor,
+                      ),
                     ),
                     Text(
                       AppLocalizations.of('Go online to start accepting jobs.'),
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: ConstanceData.secoundryFontColor,
-                          ),
+                        color: ConstanceData.secoundryFontColor,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget onlineMode() {
+    return Animator<double>(
+      duration: const Duration(milliseconds: 400),
+      cycles: 1,
+      builder: (_, animatorState, __) => SizeTransition(
+        sizeFactor: animatorState.animation,
+        axis: Axis.horizontal,
+        child: Container(
+          height: AppBar().preferredSize.height,
+          color: Theme.of(context).primaryColorDark,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 14, left: 14),
+            child: Row(
+              children: <Widget>[
+                DottedBorder(
+                  color: ConstanceData.secoundryFontColor,
+                  borderType: BorderType.Circle,
+                  strokeWidth: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      FontAwesomeIcons.car,
+                      color: ConstanceData.secoundryFontColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of('You are online !'),
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: ConstanceData.secoundryFontColor,
+                      ),
+                    ),
+                    Text(
+                      AppLocalizations.of('Hold on you will received a booking soon.'),
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: ConstanceData.secoundryFontColor,
+                      ),
                     ),
                   ],
                 )
