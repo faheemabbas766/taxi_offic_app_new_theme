@@ -17,7 +17,9 @@ class JobObject {
   late double dlong;
   late String distance;
   late String duration;
+  late String flightNo;
   late List<dynamic> stops;
+  late String sLuggage;
   int status = 0;
 
   JobObject(
@@ -38,7 +40,8 @@ class JobObject {
       this.dlat,
       this.dlong,
       this.distance,
-      this.duration
+      this.duration,
+      this.flightNo,
       );
 
   String getMonth(int month) {

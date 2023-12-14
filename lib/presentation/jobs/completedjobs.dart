@@ -6,7 +6,8 @@ import '../../Entities/jobsobject.dart';
 import '../../providers/homepro.dart';
 import '../Language/appLocalizations.dart';
 import '../constance/constance.dart';
-
+import '../home/userDetail.dart';
+import 'completeJobDetailsScreen.dart';
 List<JobObject> completedJobs = [];
 class CompletedJobs extends StatefulWidget {
   const CompletedJobs({super.key});
@@ -80,17 +81,6 @@ class _CompletedJobsState extends State<CompletedJobs> {
                                       padding: const EdgeInsets.all(14),
                                       child: Row(
                                         children: <Widget>[
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(10),
-                                            child: Image.asset(
-                                              ConstanceData.user8,
-                                              height: 50,
-                                              width: 50,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
@@ -254,18 +244,23 @@ class _CompletedJobsState extends State<CompletedJobs> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(right: 14, left: 14, top: 16),
-                                    child: Container(
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          AppLocalizations.of('Show Details'),
-                                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: ConstanceData.secoundryFontColor,
+                                    child: InkWell(
+                                      onTap:(){
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => CompleteJobsDetailScreen(item:item)));
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            AppLocalizations.of('Show Details'),
+                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: ConstanceData.secoundryFontColor,
+                                            ),
                                           ),
                                         ),
                                       ),

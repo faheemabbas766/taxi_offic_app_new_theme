@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/presentation/jobs/jobview.dart';
+import 'package:taxi_app/presentation/splashScreen.dart';
 import '../../Api & Routes/routes.dart';
+import '../../providers/homepro.dart';
 import '../Language/appLocalizations.dart';
 import '../constance/constance.dart';
 
@@ -15,6 +18,18 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
+  String userName = '';
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+  void _loadUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('userName') ?? '';
+    });
+  }
   @override
   Widget build(BuildContext context) {
     RouteManager.context=context;
@@ -39,22 +54,22 @@ class _AppDrawerState extends State<AppDrawer> {
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 30,
-                          child: new ClipRRect(
-                            borderRadius: new BorderRadius.circular(50),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
                             child: Image.asset(
                               ConstanceData.userImage,
                               fit: BoxFit.fill,
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              AppLocalizations.of('Martha Banks'),
+                              AppLocalizations.of(userName),
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
@@ -63,11 +78,11 @@ class _AppDrawerState extends State<AppDrawer> {
                                     color: ConstanceData.secoundryFontColor,
                                   ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 4,
                             ),
                             Container(
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 color:
                                     Theme.of(context).scaffoldBackgroundColor,
@@ -76,12 +91,12 @@ class _AppDrawerState extends State<AppDrawer> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Icon(
+                                  const Icon(
                                     Icons.star,
-                                    size: 16,
+                                    size: 10,
                                   ),
                                   Text(
-                                    'abc123',
+                                    'ID-${Provider.of<HomePro>(context, listen: false).userid}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelLarge!
@@ -101,7 +116,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       ],
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                     flex: 1,
                     child: SizedBox(),
                   ),
@@ -115,11 +130,11 @@ class _AppDrawerState extends State<AppDrawer> {
                             color: ConstanceData.secoundryFontColor,
                             size: 18,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 4,
                           ),
                           Text(
-                            '10.2',
+                            totalHours,
                             style:
                                 Theme.of(context).textTheme.titleMedium!.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -129,7 +144,7 @@ class _AppDrawerState extends State<AppDrawer> {
                           Row(
                             children: <Widget>[
                               Text(
-                                AppLocalizations.of('Hourse online'),
+                                AppLocalizations.of('Hour online'),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -153,7 +168,7 @@ class _AppDrawerState extends State<AppDrawer> {
                             height: 4,
                           ),
                           Text(
-                            '30 KM',
+                            '$totalDistance KM',
                             style:
                                 Theme.of(context).textTheme.titleMedium!.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -183,11 +198,11 @@ class _AppDrawerState extends State<AppDrawer> {
                             color: ConstanceData.secoundryFontColor,
                             size: 20,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 4,
                           ),
                           Text(
-                            '20',
+                            totalTodayBooking,
                             style:
                                 Theme.of(context).textTheme.titleMedium!.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -236,7 +251,7 @@ class _AppDrawerState extends State<AppDrawer> {
           padding: const EdgeInsets.only(left: 16),
           child: Column(
             children: <Widget>[
-              SizedBox(
+              const SizedBox(
                 height: 26,
               ),
               InkWell(
@@ -245,15 +260,14 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Home') {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, Routes.HOME, (Route<dynamic> route) => false);
+                    Navigator.pushNamed(context, Routes.HOME);
                   }
                 },
                 child: Row(
                   children: <Widget>[
                     widget.selectItemName == 'Home'
                         ? selectedData()
-                        : SizedBox(),
+                        : const SizedBox(),
                     Icon(
                       Icons.home,
                       size: 28,
@@ -261,7 +275,7 @@ class _AppDrawerState extends State<AppDrawer> {
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).dividerColor,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 8,
                     ),
                     Text(
@@ -274,7 +288,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
               InkWell(
@@ -292,7 +306,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     children: <Widget>[
                       widget.selectItemName == 'Jobs'
                           ? selectedData()
-                          : SizedBox(),
+                          : const SizedBox(),
                       Icon(
                         FontAwesomeIcons.wallet,
                         size: 20,
@@ -300,7 +314,7 @@ class _AppDrawerState extends State<AppDrawer> {
                             ? Theme.of(context).primaryColor
                             : Theme.of(context).dividerColor,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
@@ -315,7 +329,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
               InkWell(
@@ -324,8 +338,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Account') {
-                    Navigator.pushNamedAndRemoveUntil(context, Routes.HISTORY,
-                        (Route<dynamic> route) => false);
+                    Navigator.pushNamed(context, Routes.ACCOUNT);
                   }
                 },
                 child: Padding(
@@ -336,7 +349,7 @@ class _AppDrawerState extends State<AppDrawer> {
                           ? selectedData()
                           : const SizedBox(),
                       Icon(
-                        FontAwesomeIcons.history,
+                        FontAwesomeIcons.person,
                         size: 20,
                         color: widget.selectItemName == 'Account'
                             ? Theme.of(context).primaryColor
@@ -366,8 +379,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Vehicles') {
-                    Navigator.pushNamedAndRemoveUntil(context,
-                        Routes.NOTIFICATION, (Route<dynamic> route) => false);
+                    Navigator.pushNamed(context, Routes.VEHICLES);
                   }
                 },
                 child: Padding(
@@ -407,51 +419,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 splashColor: Colors.transparent,
                 onTap: () {
                   Navigator.pop(context);
-                  if (widget.selectItemName != 'Invite') {
-                    Navigator.pushNamedAndRemoveUntil(context, Routes.INVITE,
-                        (Route<dynamic> route) => false);
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: Row(
-                    children: <Widget>[
-                      widget.selectItemName == 'Invite'
-                          ? selectedData()
-                          : const SizedBox(),
-                      Icon(
-                        FontAwesomeIcons.gifts,
-                        size: 20,
-                        color: widget.selectItemName == 'Invite'
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).dividerColor,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        AppLocalizations.of('Account'),
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).textTheme.titleLarge!.color,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 32,
-              ),
-              InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.pop(context);
                   if (widget.selectItemName != 'Setting') {
-                    Navigator.pushNamedAndRemoveUntil(context, Routes.SETTING,
-                        (Route<dynamic> route) => false);
+                    Navigator.pushNamed(context, Routes.SETTING);
                   }
                 },
                 child: Padding(
@@ -493,8 +462,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   SharedPreferences.getInstance().then((prefs) {
                     prefs.clear();
                   });
-                  Navigator.pushNamedAndRemoveUntil(context,
-                      Routes.LOGIN, (Route<dynamic> route) => false);
+                  Navigator.pushNamed(context, Routes.LOGIN);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 4),

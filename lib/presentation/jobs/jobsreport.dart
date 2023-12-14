@@ -1,137 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../Api & Routes/routes.dart';
-import '../../Entities/jobsobject.dart';
-import '../constance/constance.dart';
-import '../home/userDetail.dart';
-import '../home/chatScreen.dart';
-import '../Language/appLocalizations.dart';
 
-class RiderList extends StatefulWidget {
+import '../Language/appLocalizations.dart';
+import '../constance/constance.dart';
+class JobsReportsScreen extends StatefulWidget {
+  const JobsReportsScreen({super.key});
+
   @override
-  _RiderListState createState() => _RiderListState();
+  State<JobsReportsScreen> createState() => _JobsReportsScreenState();
 }
 
-class _RiderListState extends State<RiderList> {
+class _JobsReportsScreenState extends State<JobsReportsScreen> {
   @override
   Widget build(BuildContext context) {
-    RouteManager.context=context;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: SizedBox(
-                child: Icon(
-                  Icons.close,
-                  color: Theme.of(context).textTheme.titleLarge!.color,
-                ),
-              ),
-            ),
-            Text(
-              'Online',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleLarge!.color,
-                  ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatScreen(),
-                  ),
-                );
-              },
-              child: SizedBox(
-                child: Icon(
-                  FontAwesomeIcons.facebookMessenger,
-                  color: Theme.of(context).textTheme.titleLarge!.color,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: AppBar().preferredSize.height,
-              color: Theme.of(context).disabledColor,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 14, left: 14),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      AppLocalizations.of('You have 10 new requess !!!'),
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: ConstanceData.secoundryFontColor,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 6, left: 6),
-                  child: InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserDetailScreen(
-                            item: JobObject(
-                                999,
-                                'faheem',
-                                '34343434',
-                                'islamabad',
-                                'rawalpindi',
-                                1,
-                                'luggage',
-                                'paymentmethod',
-                                'total_amount',
-                                DateTime.now(),
-                                'pickupnote',
-                                '',
-                                1,
-                                1,
-                                1,
-                                1,
-                                1.toString(),
-                                'duration','ere'),
-                          ),
-                        ),
-                      );
-                    },
+      body: Column(
+        children: <Widget>[
+          celanderList(),
+          Container(
+            height: 1.5,
+            color: Theme.of(context).dividerColor,
+          ),
+          jobsAndEarns(),
+          const SizedBox(
+            height: 8,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8, left: 8),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(16),
-                        color: Theme.of(context).scaffoldBackgroundColor,
+                        color: Theme.of(context).cardColor,
                       ),
                       child: Column(
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
+                              color: Theme.of(context).dividerColor,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(14),
@@ -140,7 +50,7 @@ class _RiderListState extends State<RiderList> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.asset(
-                                      ConstanceData.user8,
+                                      ConstanceData.userImage,
                                       height: 50,
                                       width: 50,
                                     ),
@@ -154,9 +64,9 @@ class _RiderListState extends State<RiderList> {
                                       Text(
                                         AppLocalizations.of('Esther Berry'),
                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 4,
@@ -170,9 +80,9 @@ class _RiderListState extends State<RiderList> {
                                               child: Text(
                                                 AppLocalizations.of('ApplePay'),
                                                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
                                               ),
                                             ),
                                             decoration: BoxDecoration(
@@ -192,9 +102,9 @@ class _RiderListState extends State<RiderList> {
                                               child: Text(
                                                 AppLocalizations.of('Discount'),
                                                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
                                               ),
                                             ),
                                             decoration: BoxDecoration(
@@ -217,16 +127,16 @@ class _RiderListState extends State<RiderList> {
                                       Text(
                                         '\$25.00',
                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
                                       ),
                                       Text(
                                         '2.2 km',
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              color: Theme.of(context).disabledColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          color: Theme.of(context).disabledColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -249,9 +159,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('PICKUP'),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 4,
@@ -259,9 +169,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('79 Swift Village'),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -286,9 +196,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('DROP OFF'),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 4,
@@ -296,92 +206,38 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('115 William St, Chicago, US'),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, top: 16),
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  AppLocalizations.of('ACCEPT'),
-                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: ConstanceData.secoundryFontColor,
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
                           SizedBox(
-                            height: 16,
+                            height: 8,
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 6, left: 6),
-                  child: InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserDetailScreen(item: JobObject(
-                              999,
-                              'faheem',
-                              '34343434',
-                              'islamabad',
-                              'rawalpindi',
-                              1,
-                              'luggage',
-                              'paymentmethod',
-                              'total_amount',
-                              DateTime.now(),
-                              'pickupnote',
-                              '',
-                              1,
-                              1,
-                              1,
-                              1,
-                              1.toString(),
-                              'duration','343433'),
-                          ),
-                        ),
-                      );
-                    },
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 6, left: 6),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(16),
-                        color: Theme.of(context).scaffoldBackgroundColor,
+                        color: Theme.of(context).cardColor,
                       ),
                       child: Column(
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
+                              color: Theme.of(context).dividerColor,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(14),
@@ -404,9 +260,9 @@ class _RiderListState extends State<RiderList> {
                                       Text(
                                         AppLocalizations.of('Callie Greer'),
                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 4,
@@ -420,9 +276,9 @@ class _RiderListState extends State<RiderList> {
                                               child: Text(
                                                 AppLocalizations.of('ApplePay'),
                                                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
                                               ),
                                             ),
                                             decoration: BoxDecoration(
@@ -442,9 +298,9 @@ class _RiderListState extends State<RiderList> {
                                               child: Text(
                                                 AppLocalizations.of('Discount'),
                                                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
                                               ),
                                             ),
                                             decoration: BoxDecoration(
@@ -467,16 +323,16 @@ class _RiderListState extends State<RiderList> {
                                       Text(
                                         '\$20.00',
                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
                                       ),
                                       Text(
                                         '1.5 km',
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              color: Theme.of(context).disabledColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          color: Theme.of(context).disabledColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -499,9 +355,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('PICKUP'),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 4,
@@ -509,9 +365,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('62 Kobe Trafficway'),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -536,9 +392,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('DROP OFF'),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 4,
@@ -546,93 +402,38 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('280, AB Sunny willa'),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, top: 16),
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  AppLocalizations.of('ACCEPT'),
-                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: ConstanceData.secoundryFontColor,
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
                           SizedBox(
-                            height: 16,
+                            height: 8,
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 6, left: 6),
-                  child: InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserDetailScreen(
-                            item: JobObject(
-                                999,
-                                'faheem',
-                                '34343434',
-                                'islamabad',
-                                'rawalpindi',
-                                1,
-                                'luggage',
-                                'paymentmethod',
-                                'total_amount',
-                                DateTime.now(),
-                                'pickupnote',
-                                '',
-                                1,
-                                1,
-                                1,
-                                1,
-                                1.toString(),
-                                'duration','ere'),
-                          ),
-                        ),
-                      );
-                    },
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 6, left: 6),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadiusDirectional.circular(16),
-                        color: Theme.of(context).scaffoldBackgroundColor,
+                        color: Theme.of(context).cardColor,
                       ),
                       child: Column(
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
+                              color: Theme.of(context).dividerColor,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(14),
@@ -655,9 +456,9 @@ class _RiderListState extends State<RiderList> {
                                       Text(
                                         AppLocalizations.of('Esther Berry'),
                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 4,
@@ -671,9 +472,9 @@ class _RiderListState extends State<RiderList> {
                                               child: Text(
                                                 AppLocalizations.of('ApplePay'),
                                                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
                                               ),
                                             ),
                                             decoration: BoxDecoration(
@@ -693,9 +494,9 @@ class _RiderListState extends State<RiderList> {
                                               child: Text(
                                                 AppLocalizations.of('Discount'),
                                                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: ConstanceData.secoundryFontColor,
+                                                ),
                                               ),
                                             ),
                                             decoration: BoxDecoration(
@@ -718,16 +519,16 @@ class _RiderListState extends State<RiderList> {
                                       Text(
                                         '\$10.00',
                                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.titleLarge!.color,
+                                        ),
                                       ),
                                       Text(
                                         '0.5 km',
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              color: Theme.of(context).disabledColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          color: Theme.of(context).disabledColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -750,19 +551,19 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('PICKUP'),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 4,
                                     ),
                                     Text(
-                                      AppLocalizations.of('25 Lcie Park Suite'),
+                                      AppLocalizations.of('25 Lcie Park Suite 456'),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -787,9 +588,9 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('DROP OFF'),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        color: Theme.of(context).disabledColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: 4,
@@ -797,54 +598,411 @@ class _RiderListState extends State<RiderList> {
                                     Text(
                                       AppLocalizations.of('187/ William St, London, UK'),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).textTheme.titleLarge!.color,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, top: 16),
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Accept',
-                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: ConstanceData.secoundryFontColor,
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
                           SizedBox(
-                            height: 16,
+                            height: 8,
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom + 16,
+                  ),
+                ],
+              ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom + 16,
-            )
-          ],
-        ),
+          )
+        ],
+      ),
+    );
+  }
+  Widget jobsAndEarns() {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      FontAwesomeIcons.carAlt,
+                      size: 40,
+                      color: ConstanceData.secoundryFontColor,
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          AppLocalizations.of('Total Job'),
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: ConstanceData.secoundryFontColor,
+                          ),
+                        ),
+                        Text(
+                          '10',
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: ConstanceData.secoundryFontColor,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: ConstanceData.secoundryFontColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).primaryColor,
+                  )),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      FontAwesomeIcons.dollarSign,
+                      size: 38,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          AppLocalizations.of('Earned'),
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        Text(
+                          '\$325',
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget celanderList() {
+    return Container(
+      padding: EdgeInsets.only(top: 8, bottom: 8),
+      color: Theme.of(context).scaffoldBackgroundColor,
+      height: 80,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Sun'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '1',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Mon'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '2',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Tue'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '3',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Wed'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '4',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Thu'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '5',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Fri'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '6',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Sat'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '7',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of('Sun'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  ),
+                  Text(
+                    '8',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            width: 50,
+          ),
+        ],
       ),
     );
   }

@@ -372,7 +372,7 @@ class _HomeState extends State<Home> {
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green),
                               onPressed: () {
-                                FlutterRingtonePlayer.stop();
+                                FlutterRingtonePlayer().stop();
                                 API.showLoading("", cont);
                                 // response = message.data['booking_detail'])["BM_SN"]
                                 API.respondToBooking(2, 2, cont).then(
@@ -403,7 +403,7 @@ class _HomeState extends State<Home> {
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xffFFB900)),
                               onPressed: () {
-                                FlutterRingtonePlayer.stop();
+                                FlutterRingtonePlayer().stop();
                                 API.showLoading("", cont);
                                 API
                                     .respondToBooking(

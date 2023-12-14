@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart'as http;
 import 'package:animator/animator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ import 'constance/constance.dart' as constance;
 import 'constance/constance.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -19,6 +22,46 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
+  Future<void>getUserInfo(int userId)async {
+    var headers = {
+      'token': Provider.of<HomePro>(context, listen: false).token,
+    };
+    var request = http.MultipartRequest('POST', Uri.parse('https://minicab.imdispatch.co.uk/api/getsingleuserdetail'));
+    request.fields.addAll({
+      'driver_id': userId.toString(),
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String responseData = await response.stream.bytesToString();
+      handleSuccessResponse(responseData);
+    }
+    else {
+      if (kDebugMode) {
+        print(response.reasonPhrase);
+      }
+    }
+
+  }
+  void handleSuccessResponse(String responseData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> responseMap = json.decode(responseData);
+    Map<String, dynamic> userData = responseMap['Userdata'];
+    totalHours = userData['totalHours'].toString();
+    totalTodayBooking = userData['totalTodayBooking'].toString();
+    totalEarning = userData['totalEarning'].toString();
+    totalDistance = userData['totalDistance'].toString();
+    userName = userData['userName'];
+    prefs.setString('totalHours', totalHours);
+    prefs.setString('totalTodayBooking', totalTodayBooking);
+    prefs.setString('totalEarning', totalEarning);
+    prefs.setString('totalDistance', totalDistance);
+    prefs.setString('userName', userName);
+    print('User INFOOOOOOOOOOOOOO Done:::::::::::::::::::');
+  }
 
   @override
   initState() {
@@ -50,6 +93,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               API.postlocation = true;
             }
           }
+          await getUserInfo(Provider.of<HomePro>(context, listen: false).userid);
           Navigator.pushReplacementNamed(context, Routes.HOME);
         }else
           Navigator.pushReplacementNamed(context, Routes.LOGIN);
@@ -135,10 +179,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
             ),
             Animator<Offset>(
               tween: Tween<Offset>(
-                begin: Offset(0, 0.4),
-                end: Offset(0, 0),
+                begin: const Offset(0, 0.4),
+                end: const Offset(0, 0),
               ),
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
               cycles: 1,
               builder: (context, animate, _) => SlideTransition(
                 position: animate.animation,
@@ -155,3 +199,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
   }
 }
+String totalHours = '';
+String totalTodayBooking = '';
+String totalEarning = '';
+String totalDistance = '';
+String userName = '';

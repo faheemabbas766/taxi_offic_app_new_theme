@@ -6,14 +6,14 @@ import '../appTheme.dart';
 import '../Language/appLocalizations.dart';
 import '../vehicalManagement/vehicalmanagementScreen.dart';
 
-class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+class VehiclesScreen extends StatefulWidget {
+  const VehiclesScreen({super.key});
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _VehiclesScreenState createState() => _VehiclesScreenState();
 }
 
-class _NotificationScreenState extends State<NotificationScreen> {
+class _VehiclesScreenState extends State<VehiclesScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override

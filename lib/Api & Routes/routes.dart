@@ -3,6 +3,8 @@ import 'package:taxi_app/bottom/bottomnavigation.dart';
 import 'package:taxi_app/pages/add_booking.dart';
 import 'package:taxi_app/pages/home.dart';
 import 'package:taxi_app/pages/tripdetails.dart';
+import 'package:taxi_app/presentation/notification/notificationScree.dart';
+import 'package:taxi_app/presentation/vehicalManagement/vehicalmanagementScreen.dart';
 import '../pages/live_status.dart';
 import '../pages/pobmap.dart';
 import '../pages/startshift.dart';
@@ -13,7 +15,7 @@ import '../presentation/introduction/LocationScreen.dart';
 import '../presentation/introduction/introductionScreen.dart';
 import '../presentation/inviteFriend/inviteFriendScreen.dart';
 import '../presentation/jobs/jobview.dart';
-import '../presentation/notification/notificationScree.dart';
+import '../presentation/setting/myProfile.dart';
 import '../presentation/setting/settingScreen.dart';
 import '../presentation/splashScreen.dart';
 import '../presentation/wallet/myWallet.dart';
@@ -34,6 +36,7 @@ class RouteManager {
   static const String pobmappage = "/pobmappage";
   static const String addBooking = "/add_booking";
   static const String liveStatus = "/live_status";
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case signinpage:
@@ -72,10 +75,10 @@ var routes = <String, WidgetBuilder>{
   Routes.ENABLELOCATION: (BuildContext context) => EnableLocation(),
   Routes.HOME: (BuildContext context) => HomeScreen(),
   Routes.HISTORY: (BuildContext context) => HistoryScreen(),
-  Routes.NOTIFICATION: (BuildContext context) => NotificationScreen(),
+  Routes.VEHICLES: (BuildContext context) => VehicleManagement(),
   Routes.INVITE: (BuildContext context) => InviteFriendScreen(),
   Routes.SETTING: (BuildContext context) => SettingScreen(),
-  Routes.WALLET: (BuildContext context) => MyWallet(),
+  Routes.ACCOUNT: (BuildContext context) => MyProfile(),
   Routes.LOGIN: (BuildContext context) => LoginScreen(),
   Routes.JOBS: (BuildContext context) => JobView(),
 };
@@ -86,9 +89,9 @@ class Routes {
   static const String LOGIN = "/auth/loginScreen";
   static const String HOME = "/home/homeScreen";
   static const String HISTORY = "/history/historyScreen";
-  static const String NOTIFICATION = "/notification/notificationScree";
+  static const String VEHICLES = "/notification/notificationScree";
   static const String INVITE = "/inviteFriend/inviteFriendScreen";
   static const String SETTING = "/setting/settingScreen";
-  static const String WALLET = "/wallet/myWallet";
+  static const String ACCOUNT = "/setting/myProfile";
   static const String JOBS = "/jobs/jobview.dart";
 }

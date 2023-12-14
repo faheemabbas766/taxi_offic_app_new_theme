@@ -3,10 +3,10 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/presentation/home/riderList.dart';
+import 'package:taxi_app/presentation/splashScreen.dart';
 import '../../Api & Routes/api.dart';
 import '../../Api & Routes/routes.dart';
 import '../../providers/homepro.dart';
@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       String? userid = (await SharedPreferences.getInstance()).getString("userid");
                       if(value){
                         if(await API.startShift(int.parse(userid!),context)){
-                          FlutterRingtonePlayer.playNotification();
+                          FlutterRingtonePlayer().playNotification();
                           isOffline = value;
                         }else{
                           isOffline = !isOffline;
@@ -605,14 +605,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      AppLocalizations.of('Jeremiah Curtis'),
+                      AppLocalizations.of(userName),
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).textTheme.titleLarge!.color,
                           ),
                     ),
                     Text(
-                      AppLocalizations.of('Basic level'),
+                      AppLocalizations.of('Driver'),
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).primaryColor,
@@ -627,7 +627,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '\$325.00',
+                      '\$$totalEarning',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).textTheme.titleLarge!.color,
@@ -672,7 +672,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 4,
                         ),
                         Text(
-                          '10.2',
+                          totalHours,
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: ConstanceData.secoundryFontColor,
@@ -705,7 +705,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 4,
                         ),
                         Text(
-                          '30 KM',
+                          '$totalDistance KM',
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: ConstanceData.secoundryFontColor,
@@ -738,7 +738,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 4,
                         ),
                         Text(
-                          '20',
+                          totalTodayBooking,
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: ConstanceData.secoundryFontColor,

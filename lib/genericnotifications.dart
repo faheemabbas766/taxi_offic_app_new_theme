@@ -97,12 +97,7 @@ class GenericNotifications {
           return;
         }
         cancelAllNotifications();
-        API.respondToBooking(int.parse(jsonDecode(
-            n.payload.toString())["BM_SN"]), 99, RouteManager.context!).then(
-              (value) {
-                Navigator.of(RouteManager.context!).pushNamed(Routes.JOBS);
-          },
-        );
+        Navigator.of(RouteManager.context!).pushNamed(Routes.JOBS);
       },
       // onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );

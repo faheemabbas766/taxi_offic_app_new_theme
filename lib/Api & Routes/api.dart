@@ -119,8 +119,8 @@ class API {
     try {
       response = await request.send().timeout(const Duration(seconds: 25),
           onTimeout: () {
-        throw "TimeOut";
-      });
+            throw "TimeOut";
+          });
       var responsed = await http.Response.fromStream(response);
       if (response.statusCode == 401){
         SharedPreferences.getInstance().then((prefs) {
@@ -183,7 +183,7 @@ class API {
     }
     if (kDebugMode) {
       print(
-        "GET SHIFTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT CALLEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+          "GET SHIFTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT CALLEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
     }
     var request = http.MultipartRequest(
       'POST',
@@ -200,7 +200,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       var responsed = await http.Response.fromStream(response);
@@ -242,7 +242,7 @@ class API {
       } else {
         if (kDebugMode) {
           print(
-            "STATUS CODE IS : : : : : : : : : :${response.statusCode}: ${responsed.body}");
+              "STATUS CODE IS : : : : : : : : : :${response.statusCode}: ${responsed.body}");
         }
         ft.Fluttertoast.showToast(
           msg: "Sign In Unsuccessful",
@@ -273,7 +273,7 @@ class API {
       'Accept': 'application/json',
       'token': Provider.of<HomePro>(context, listen: false).token,
     });
-    request.fields.addAll({'id': userid.toString(), 'status': '99,2,9,11'});
+    request.fields.addAll({'id': userid.toString(), 'status': '1,2,9,11'});
     http.StreamedResponse response;
     try {
       response = await request.send().timeout(
@@ -302,39 +302,38 @@ class API {
               print("res of I IS : : :$i");
             }
             JobObject jj = JobObject(
-                int.parse(i["BM_SN"]??"401"),
-                i["CUS_NAME"]?? "Name",
-                i["CUS_PHONE"]?? "Phone",
-                i["BM_PICKUP"]?? "Pickup",
-                i["BM_DROP"]?? "drop",
-                int.parse(i["BM_PASSENGER"]),
-                i["BM_LAGGAGE"] == "1"
-                    ? "Large"
-                    : i["BM_LAGGAGE"] == "2"
-                        ? "Small"
-                        : "Hand Carry",
-                i["BM_PAY_METHOD"] == "1"
-                    ? "Cash"
-                    : i["BM_PAY_METHOD"] == "2"
-                        ? "Card"
-                        : "Account",
-                i["total_amount"].toString(),
-                DateTime(
-                  int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
-                  int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
-                  int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
-                  int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
-                  int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
-                  int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
-                ),
-                i["BM_PICKUP_NOTE"] ?? "No Note",
-                i["BM_DROP_NOTE"] ?? "No Note",
-                double.parse(i["BM_PLAT"]),
-                double.parse(i["BM_PLANG"]),
-                double.parse(i["BM_DLAT"]?? "0.0"),
-                double.parse(i["BM_DLANG"]?? "0.0"),
-                double.tryParse(i["BM_DISTANCE"]).toString(),
-                i["BM_DISTANCE_TIMe"].toString());
+              int.parse(i["BM_SN"]??"999"),
+              i["CUS_NAME"]?? "Name",
+              i["CUS_PHONE"]?? "Phone",
+              i["BM_PICKUP"]?? "Pickup",
+              i["BM_DROP"]?? "drop",
+              int.parse(i["BM_PASSENGER"]),
+              i["BM_LAGGAGE"]?? '0',
+              i["BM_PAY_METHOD"] == "1"
+                  ? "Cash"
+                  : i["BM_PAY_METHOD"] == "2"
+                  ? "Card"
+                  : "Account",
+              i["total_amount"].toString(),
+              DateTime(
+                int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
+                int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
+                int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
+                int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
+                int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
+                int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
+              ),
+              i["BM_PICKUP_NOTE"]??' ',
+              i["BM_DROP_NOTE"]?? ' ',
+              double.parse(i["BM_PLAT"]?? '0.0'),
+              double.parse(i["BM_PLANG"]?? '0.0'),
+              double.parse(i["BM_DLAT"]?? "0.0"),
+              double.parse(i["BM_DLANG"]?? "0.0"),
+              double.tryParse(i["BM_DISTANCE"]).toString(),
+              i["BM_DISTANCE_TIMe"]?? '0',
+              i["FLIGHT_NUMBER"]?? '0',
+            );
+            jj.sLuggage =i["BM_M_LUGGAE"]?? '0';
             jj.status = int.parse(i["BM_STATUS"]);
             print("STATUS OF CURRENT JOB IS::::::::::::::::::${jj.status}");
             Provider.of<CurrentJobsPro>(context, listen: false).jobs.add(jj);
@@ -371,7 +370,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       var responsed = await http.Response.fromStream(response);
@@ -392,39 +391,41 @@ class API {
           completedJobs = [];
           for (var i in res["data"]) {
             completedJobs.add(JobObject(
-                      int.parse(i["BM_SN"]),
-                      i["CUS_NAME"],
-                      i["CUS_PHONE"],
-                      i["BM_PICKUP"],
-                      i["BM_DROP"],
-                      int.parse(i["BM_PASSENGER"]),
-                      i["BM_LAGGAGE"] == "1"
-                          ? "Large"
-                          : i["BM_LAGGAGE"] == "2"
-                              ? "Small"
-                              : "Hand Carry",
-                      i["BM_PAY_METHOD"] == "1"
-                          ? "Cash"
-                          : i["BM_PAY_METHOD"] == "2"
-                              ? "Card"
-                              : "Account",
-                      i["total_amount"],
-                      DateTime(
-                        int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
-                        int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
-                        int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
-                        int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
-                        int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
-                        int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
-                      ),
-                      i["BM_PICKUP_NOTE"] ?? "Default Pickup Note",
-                      i["BM_DROP_NOTE"] ?? "Default Drop Note",
-                      double.parse(i["BM_PLAT"]),
-                      double.parse(i["BM_PLANG"]),
-                      double.parse(i["BM_DLAT"]),
-                      double.parse(i["BM_DLANG"]),
-                      i["BM_DISTANCE"].toString(),
-                      i["BM_DISTANCE_TIME"].toString()),);
+                int.parse(i["BM_SN"]),
+                i["CUS_NAME"],
+                i["CUS_PHONE"],
+                i["BM_PICKUP"],
+                i["BM_DROP"],
+                int.parse(i["BM_PASSENGER"]),
+                i["BM_LAGGAGE"] == "1"
+                    ? "Large"
+                    : i["BM_LAGGAGE"] == "2"
+                    ? "Small"
+                    : "Hand Carry",
+                i["BM_PAY_METHOD"] == "1"
+                    ? "Cash"
+                    : i["BM_PAY_METHOD"] == "2"
+                    ? "Card"
+                    : "Account",
+                i["total_amount"],
+                DateTime(
+                  int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
+                  int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
+                  int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
+                  int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
+                  int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
+                  int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
+                ),
+                i["BM_PICKUP_NOTE"] ?? "Default Pickup Note",
+                i["BM_DROP_NOTE"] ?? "Default Drop Note",
+                double.parse(i["BM_PLAT"]),
+                double.parse(i["BM_PLANG"]),
+                double.parse(i["BM_DLAT"]),
+                double.parse(i["BM_DLANG"]),
+                i["BM_DISTANCE"].toString(),
+                i["BM_DISTANCE_TIME"].toString(),
+                i["FLIGHT_NUMBER"].toString()?? ''
+            ),);
           }
         }
         print("RESPONSE IS : : : : : :$res");
@@ -454,7 +455,7 @@ class API {
     });
     request.fields.addAll({
       'id': userid.toString(),
-      'status': 12.toString(),
+      'status': '12',
     });
     http.StreamedResponse response;
     try {
@@ -480,41 +481,43 @@ class API {
           for (var i in res["data"]) {
             // print("res of I IS : : :"+i.toString());
             pendingJobs.add(
-                  JobObject(
-                      int.parse(i["BM_SN"])?? 0,
-                      i["CUS_NAME"],
-                      i["CUS_PHONE"],
-                      i["BM_PICKUP"],
-                      i["BM_DROP"],
-                      int.parse(i["BM_PASSENGER"]),
-                      i["BM_LAGGAGE"] == "1"
-                          ? "Large"
-                          : i["BM_LAGGAGE"] == "2"
-                              ? "Small"
-                              : "Hand Carry",
-                      i["BM_PAY_METHOD"] == "1"
-                          ? "Cash"
-                          : i["BM_PAY_METHOD"] == "2"
-                              ? "Card"
-                              : "Account",
-                      i["total_amount"],
-                      DateTime(
-                        int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
-                        int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
-                        int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
-                        int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
-                        int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
-                        int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
-                      ),
-                      i["BM_PICKUP_NOTE"] ?? "Default Pickup Note",
-                      i["BM_DROP_NOTE"] ?? "Default Drop Note",
-                      double.parse(i["BM_PLAT"]?? 0),
-                      double.parse(i["BM_PLANG"]?? 0),
-                      double.parse(i["BM_DLAT"]?? 0),
-                      double.parse(i["BM_DLANG"]?? 0),
-                      i["BM_DISTANCE"].toString()?? '',
-                      i["BM_DISTANCE_TIMe"].toString()?? ''),
-                );
+              JobObject(
+                  int.parse(i["BM_SN"])?? 0,
+                  i["CUS_NAME"],
+                  i["CUS_PHONE"],
+                  i["BM_PICKUP"],
+                  i["BM_DROP"],
+                  int.parse(i["BM_PASSENGER"]),
+                  i["BM_LAGGAGE"] == "1"
+                      ? "Large"
+                      : i["BM_LAGGAGE"] == "2"
+                      ? "Small"
+                      : "Hand Carry",
+                  i["BM_PAY_METHOD"] == "1"
+                      ? "Cash"
+                      : i["BM_PAY_METHOD"] == "2"
+                      ? "Card"
+                      : "Account",
+                  i["total_amount"],
+                  DateTime(
+                    int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
+                    int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
+                    int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
+                    int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
+                    int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
+                    int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
+                  ),
+                  i["BM_PICKUP_NOTE"] ?? "Default Pickup Note",
+                  i["BM_DROP_NOTE"] ?? "Default Drop Note",
+                  double.parse(i["BM_PLAT"]?? 0),
+                  double.parse(i["BM_PLANG"]?? 0),
+                  double.parse(i["BM_DLAT"]?? 0),
+                  double.parse(i["BM_DLANG"]?? 0),
+                  i["BM_DISTANCE"].toString()?? '',
+                  i["BM_DISTANCE_TIMe"].toString()?? '',
+                  i["FLIGHT_NUMBER"].toString()?? ''
+              ),
+            );
           }
         }
         print("RESPONSE IS : : : : : :$res");
@@ -546,7 +549,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       print(
@@ -602,7 +605,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       var responsed = await http.Response.fromStream(response);
@@ -622,7 +625,7 @@ class API {
         print("RESPONSE IS : : : : : :${responsed.body}");
         if (kDebugMode) {
           print(
-            "AAALLLLLLLLLLLLLLL GOOOOOOOOOOOOOOOOOODDDDDDDDDDDDDDDDDDDDDDDD Get Vechicles by id");
+              "AAALLLLLLLLLLLLLLL GOOOOOOOOOOOOOOOOOODDDDDDDDDDDDDDDDDDDDDDDD Get Vechicles by id");
         }
         for (var i in res["data"]) {
           // if(Provider.of<HomePro>(context,listen:false).shiftid!=-1 && Provider.of<HomePro>(context,listen:false).vehicleid!=-1)
@@ -645,7 +648,9 @@ class API {
             Vehicle(
                 int.parse(i["uv_id"]),
                 i["uv_make"],
-                i["uv_model"]),
+                i["uv_model"],
+                i["uv_current_vehicle"]
+            ),
           );
         }
         Provider.of<StartShiftPro>(context, listen: false).isloaded = true;
@@ -658,7 +663,7 @@ class API {
       } else {
         if (kDebugMode) {
           print(
-            "STATUS CODE IS : : : : : : : : : :${response.statusCode}: ${responsed.body}");
+              "STATUS CODE IS : : : : : : : : : :${response.statusCode}: ${responsed.body}");
         }
         // Navigator.of(context, rootNavigator: true).pop();
         ft.Fluttertoast.showToast(
@@ -708,7 +713,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       var responsed = await http.Response.fromStream(response);if (
@@ -728,7 +733,7 @@ class API {
           return true;
         }
         Provider.of<HomePro>(context, listen: false).shiftid =
-            res["Shiftdata"]["shift_id"];
+        res["Shiftdata"]["shift_id"];
         String dtfrom = res["Shiftdata"]["shift_date_time_from"].toString();
         String dtto = res["Shiftdata"]["shift_date_time_to"].toString();
         Provider.of<HomePro>(context, listen: false).shiftfrom = DateTime(
@@ -810,8 +815,8 @@ class API {
     try {
       response = await request.send().timeout(const Duration(seconds: 20),
           onTimeout: () {
-        throw "TimeOut";
-      });
+            throw "TimeOut";
+          });
       var responsed = await http.Response.fromStream(response);
       if (response.statusCode == 401){
         SharedPreferences.getInstance().then((prefs) {
@@ -865,7 +870,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       var responsed = await http.Response.fromStream(response);
@@ -927,7 +932,7 @@ class API {
     http.StreamedResponse response;
     try {
       response =
-          await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
+      await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
       var responsed = await http.Response.fromStream(response);

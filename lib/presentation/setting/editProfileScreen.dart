@@ -1,34 +1,38 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart'as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taxi_app/presentation/vehicalManagement/vehicleDetailsScreen.dart';
+import 'package:fluttertoast/fluttertoast.dart'as ft;
 import '../../providers/homepro.dart';
 import '../Language/appLocalizations.dart';
 import '../constance/constance.dart';
-import 'package:http/http.dart'as http;
-import 'package:fluttertoast/fluttertoast.dart'as ft;
-class AddNewVehicle extends StatefulWidget {
-  final VehicleDetails vehicleDetails;
-  const AddNewVehicle(this.vehicleDetails, {super.key});
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
+
   @override
-  _AddNewVehicleState createState() => _AddNewVehicleState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _AddNewVehicleState extends State<AddNewVehicle> {
-  TextEditingController regNumberController = TextEditingController();
-  TextEditingController makeController = TextEditingController();
-  TextEditingController modelController = TextEditingController();
-  TextEditingController colorController = TextEditingController();
-  TextEditingController motExpiryController = TextEditingController();
-  TextEditingController insuranceExpiryController = TextEditingController();
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
+  TextEditingController hPhoneController = TextEditingController();
+  TextEditingController niNumberController = TextEditingController();
+  TextEditingController licenceNumberController = TextEditingController();
+  TextEditingController licenceExpiryController = TextEditingController();
+  TextEditingController phvNumberController = TextEditingController();
   TextEditingController phvExpiryController = TextEditingController();
-  TextEditingController logBookController = TextEditingController();
-  TextEditingController numberController = TextEditingController();
-  TextEditingController rhvBadgeNumberController = TextEditingController();
-  String? imageInsurance,imageMot,imageVehiclePhv,imageUv;
+  TextEditingController passportNumberController = TextEditingController();
+  TextEditingController passportExpiryController = TextEditingController();
+  TextEditingController biometricNumberController = TextEditingController();
+  TextEditingController biometricExpiryController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  String? empLicNumExpImage,empDriPhvExpImage,empPassportExpImage,empBiometricExpImage;
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
   String? selectedVehicle;
@@ -47,7 +51,7 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
     var request = http.MultipartRequest(
       'POST',
       Uri.parse(
-          "https://minicab.imdispatch.co.uk/api/addvehicle"),
+          "https://minicab.imdispatch.co.uk/api/saveuserprofile"),
     );
     request.headers.addAll({
       'Content-type': 'multipart/form-data',
@@ -56,44 +60,48 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     request.fields.addAll({
-      "veh_id": widget.vehicleDetails.uvId,
-      "driver_id": prefs.getString('userid')!,
-      "uv_reg_num": regNumberController.text,
-      "uv_mot_expiry": motExpiryController.text,
-      "uv_insurance_expiry": insuranceExpiryController.text,
-      "uv_vehicle_rhv_bagde_number":rhvBadgeNumberController.text,
-      "uv_vehicle_rhv_bagde_expiry": phvExpiryController.text,
-      "uv_color": colorController.text,
-      "uv_make": makeController.text,
-      "uv_number": numberController.text,
-      "uv_model": modelController.text,
-      "uv_log_book": logBookController.text,
-      "uv_status":'1',
-      "uv_car_d_ref":selectedVehicle!
+      'id': prefs.getString('userid').toString(),
+      'firstname': '',
+      'lastname': '',
+      'phone': '',
+      'dob': '',
+      'h_phone': '',
+      'ni_number': '',
+      'licence_number': '',
+      'licence_expiry': '',
+      'phv_number': '',
+      'phv_expiry': '',
+      'passport_number': '',
+      'passport_expiry': '',
+      'biometric_number': '',
+      'biometric_expiry': '',
+      'address': '',
+      'username': ''
     });
     request.files.add(await http.MultipartFile.fromPath(
-      'uv_insurance_image',
-      imageInsurance!,
-      filename: 'uv_insurance_image', // Preserve the original file name and extension
+      'EMP_LICENCE_NUM_EXPIRY_IMAGE',
+      empLicNumExpImage!,
+      filename: 'EMP_LICENCE_NUM_EXPIRY_IMAGE', // Preserve the original file name and extension
     ));
     request.files.add(await http.MultipartFile.fromPath(
-      'uv_mot_image',
-      imageMot!,
-      filename: 'uv_mot_image', // Preserve the original file name and extension
+      'EMP_DRIVER_PHV_BADGE_EXPIRY_IMAGE',
+      empDriPhvExpImage!,
+      filename: 'EMP_DRIVER_PHV_BADGE_EXPIRY_IMAGE', // Preserve the original file name and extension
     ));
     request.files.add(await http.MultipartFile.fromPath(
-      'uv_vehicle_rhv_bagde_image',
-      imageVehiclePhv!,
-      filename: 'uv_vehicle_rhv_bagde_image', // Preserve the original file name and extension
+      'EMP_PASSPORT_EXPIRY_IMAGE',
+      empPassportExpImage!,
+      filename: 'EMP_PASSPORT_EXPIRY_IMAGE', // Preserve the original file name and extension
     ));
     request.files.add(await http.MultipartFile.fromPath(
-      'uv_image',
-      imageUv!,
-      filename: 'uv_image', // Preserve the original file name and extension
+      'EMP_BIOMETRIC_EXPIRY_IMAGE',
+      empBiometricExpImage!,
+      filename: 'EMP_BIOMETRIC_EXPIRY_IMAGE', // Preserve the original file name and extension
     ));
     http.StreamedResponse response;
     response = await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
-      isLoading = false;ft.Fluttertoast.showToast(
+      isLoading = false;
+      ft.Fluttertoast.showToast(
         msg: "Request TimeOut",
         toastLength: ft.Toast.LENGTH_LONG,
       );
@@ -124,20 +132,6 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    regNumberController.text = widget.vehicleDetails.uvRegNum;
-    makeController.text = widget.vehicleDetails.uvMake;
-    modelController.text = widget.vehicleDetails.uvModel;
-    colorController.text = widget.vehicleDetails.uvColor;
-    rhvBadgeNumberController.text = widget.vehicleDetails.uvVehicleRhvBadgeNumber;
-    motExpiryController.text = widget.vehicleDetails.uvMotExpiry;
-    insuranceExpiryController.text = widget.vehicleDetails.uvInsuranceExpiry;
-    phvExpiryController.text = widget.vehicleDetails.uvVehicleRhvBadgeExpiry;
-    logBookController.text = widget.vehicleDetails.uvLogBook;
-    numberController.text = widget.vehicleDetails.uvNumber;
-    imageInsurance = widget.vehicleDetails.uvInsuranceImage;
-    imageMot =widget.vehicleDetails.uvMotImage;
-    imageVehiclePhv =widget.vehicleDetails.uvVehicleRhvBadgeImage;
-    imageUv = widget.vehicleDetails.uvImage;
     setState(() {
     });
   }
@@ -166,7 +160,7 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
               ),
             ),
             Text(
-              AppLocalizations.of('Add a new vehicle'),
+              AppLocalizations.of('Edit Profile'),
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).textTheme.titleLarge!.color,
@@ -190,7 +184,7 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
                         Row(
                           children: <Widget>[
                             Text(
-                              AppLocalizations.of('VEHICLE NUMBER'),
+                              AppLocalizations.of('FIRST NAME'),
                               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).disabledColor,
@@ -214,9 +208,9 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              labelText: 'Vehicle Number',
+                              labelText: 'First Name',
                             ),
-                            controller: numberController,
+                            controller: firstNameController,
                           ),
                         ),
                         const SizedBox(
@@ -225,7 +219,7 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
                         Row(
                           children: <Widget>[
                             Text(
-                              AppLocalizations.of('VEHICLE MAKE'),
+                              AppLocalizations.of('LAST NAME'),
                               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).disabledColor,
@@ -249,9 +243,9 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              labelText: 'Vehicle Make',
+                              labelText: 'Last Name',
                             ),
-                            controller: makeController,
+                            controller: lastNameController,
                           ),
                         ),
                         const SizedBox(
@@ -260,7 +254,7 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
                         Row(
                           children: <Widget>[
                             Text(
-                              AppLocalizations.of('Registration No'),
+                              AppLocalizations.of('PHONE'),
                               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).disabledColor,
@@ -284,9 +278,9 @@ class _AddNewVehicleState extends State<AddNewVehicle> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              labelText: 'Registration No',
+                              labelText: 'Phone',
                             ),
-                            controller: regNumberController,
+                            controller: phoneController,
                           ),
                         ),
                         const SizedBox(

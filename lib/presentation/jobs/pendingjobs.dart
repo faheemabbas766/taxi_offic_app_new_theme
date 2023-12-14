@@ -5,6 +5,7 @@ import '../../Api & Routes/api.dart';
 import '../../Api & Routes/routes.dart';
 import '../../Entities/jobsobject.dart';
 import '../../providers/homepro.dart';
+import '../../providers/themepro.dart';
 import '../Language/appLocalizations.dart';
 import '../constance/constance.dart';
 import '../home/userDetail.dart';
@@ -26,26 +27,20 @@ class _PendingJobsState extends State<PendingJobs> {
   }
   Future<void> loadData() async {
     await getMyPendingJobs();
-    isLoading = false;
-    setState(() {});
   }
   getMyPendingJobs() async {
-    if(mounted){
-      while (true) {
-        var val = await API.getPendingJobs(
-            Provider.of<HomePro>(context, listen: false).userid,context);
-        if (val) {
-          break;
-        }
-      }
-    }
+    await API.getPendingJobs(Provider.of<HomePro>(context, listen: false).userid,context);
+    isLoading = false;
+    setState(() {});
   }
   @override
   Widget build(BuildContext context) {
     RouteManager.context=context;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body:isLoading? const Center(child: CircularProgressIndicator(),)
+      backgroundColor: AppColors.of(context).secondaryDimColor,
+      body: isLoading
+          ? pendingJobs.isEmpty
+          ? const Center(child: CircularProgressIndicator())
           :Column(
         children:[
           const SizedBox(
@@ -271,7 +266,7 @@ class _PendingJobsState extends State<PendingJobs> {
                               .pushNamed(Routes.JOBS);
                         },
                         );
-                        await FlutterRingtonePlayer.play(fromAsset: 'assets/accept_tone.mp3');
+                        await FlutterRingtonePlayer().play(fromAsset: 'assets/accept_tone.mp3');
                       },
                       child: Padding(
                         padding: EdgeInsets.only(right: 14, left: 14, top: 16),
@@ -305,6 +300,37 @@ class _PendingJobsState extends State<PendingJobs> {
             height: MediaQuery.of(context).padding.bottom + 16,
           )
         ],
+      )
+          : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "No Jobs Taken Yet",
+              style: TextStyle(
+                fontSize: RouteManager.width / 20,
+                color: const Color.fromARGB(255, 54, 54, 54),
+              ),
+            ),
+            SizedBox(height: RouteManager.width / 23),
+            InkWell(
+              onTap: () async {
+                isLoading = true;
+                setState(() {
+
+                });
+                await getMyPendingJobs();
+              },
+              child: Text(
+                "Tap Here to Refresh",
+                style: TextStyle(
+                  fontSize: RouteManager.width / 18,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ],
+        ),
       )
     );
   }

@@ -60,7 +60,7 @@ class _JobViewState extends State<JobView> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.check),
-                label: "Completed Job",
+                label: "Complete Job",
               ),
             ],
             currentIndex: _currentIndex,

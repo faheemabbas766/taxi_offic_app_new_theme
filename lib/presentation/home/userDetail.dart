@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Api & Routes/api.dart';
@@ -25,11 +27,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   Future<void> getMyCurrentJobs() async {
     if (mounted) {
       while (true) {
-        final currentJobsPro =
-        Provider.of<CurrentJobsPro>(context, listen: false);
+        final currentJobsPro = Provider.of<CurrentJobsPro>(context, listen: false);
         currentJobsPro.isloaded = false;
         currentJobsPro.notifyListenerz();
-
         final homePro = Provider.of<HomePro>(context, listen: false);
         final val = await API.getCurrentJobs(homePro.userid, context);
         if (val) {
@@ -49,9 +49,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         Provider.of<CurrentJobsPro>(context, listen: false).jobs[index].bookid.toString(), context);
     list = fetchedList;
     listLoad = false;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -100,22 +98,15 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
           Expanded(
             child: ListView(
               children: <Widget>[
-                userDetailbar(item),
-                Container(
-                  height: 1,
-                  width: MediaQuery.of(context).size.width,
-                  color: Theme.of(context).dividerColor,
-                ),
+                userDetailbar(item,context),
                 listLoad? const Center(child: CircularProgressIndicator(),)
-                    :SizedBox(
-                  height: RouteManager.height / 4.5,
-                  width: RouteManager.width / 1.5,
+                    :Container(
+                  color: HexColor('#F4F6F7'),
+                  height: RouteManager.height / 3,
                   child: ListView.builder(
-                    addAutomaticKeepAlives: true,
                     itemCount: list.length,
                     itemBuilder: (context, index) {
-                      Map<String, dynamic> destination =
-                      list[index];
+                      Map<String, dynamic> destination = list[index];
                       bool isFirstStop = index == 0;
                       bool isLastStop = index == list.length - 1;
                       String title;
@@ -177,24 +168,39 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                 onPressed: () {
                                   openGoogleMapsNavigationToDestination(
                                     double.parse(destination['BD_LAT']),
-                                    double.parse(
-                                        destination['BD_LANG']),
+                                    double.parse(destination['BD_LANG']),
                                   );
                                 },
                               ),
                             ),
                           ),
+                          title=='Destination'?Container(
+                            height: 1,
+                            width: MediaQuery.of(context).size.width,
+                            color: Theme.of(context).dividerColor,
+                          ):
+                              Container()
                         ],
                       );
                     },
                   ),
                 ),
                 Container(
-                  height: 1,
-                  width: MediaQuery.of(context).size.width,
-                  color: Theme.of(context).dividerColor,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 14, left: 14),
+                    child: Flex(
+                      direction: Axis.vertical,
+                      children: [
+                        MySeparator(
+                          color: Theme.of(context).primaryColor,
+                          height: 1,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                noted(item),
+                noted(item,context),
                 Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: Padding(
@@ -210,25 +216,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     ),
                   ),
                 ),
-                tripFare(item),
-                Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 14, left: 14),
-                    child: Flex(
-                      direction: Axis.vertical,
-                      children: [
-                        MySeparator(
-                          color: Theme.of(context).primaryColor,
-                          height: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                contact(item),
+                contact(item,context),
                 isLoading? const Center(child: CircularProgressIndicator())
-                    :pickup(item),
+                    :pickup(item,context),
 
               ],
             ),
@@ -241,7 +231,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     );
   }
 
-  Widget pickup(JobObject item) {
+  Widget pickup(JobObject item, BuildContext context) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Padding(
@@ -266,7 +256,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               print(Provider.of<CurrentJobsPro>(context, listen: false).jobs[index].status);
             }
             int mapStatus(int currentStatus) {
-              if (currentStatus == 99){
+              if (currentStatus == 1){
                 return 2;
               } else if(currentStatus == 2) {
                 return 11;
@@ -285,6 +275,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                   (value) async {
                 if (value) {
                   if(Provider.of<CurrentJobsPro>(context, listen: false).jobs[index].status==9){
+                    await getMyCurrentJobs();
                     Navigator.pop(context);
                   }
                   Provider.of<CurrentJobsPro>(context, listen: false).notifyListenerz();
@@ -305,7 +296,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             ),
             child: Center(
               child: Text(
-                AppLocalizations.of((Provider.of<CurrentJobsPro>(context).jobs[index].status == 99)
+                AppLocalizations.of((Provider.of<CurrentJobsPro>(context).jobs[index].status == 1)
                     ? 'Accept'
                     : (Provider.of<CurrentJobsPro>(context).jobs[index].status == 2)
                     ? 'Arrived'
@@ -313,9 +304,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     ? 'POB'
                     : 'Finish'),
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: ConstanceData.secoundryFontColor,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: ConstanceData.secoundryFontColor,
+                ),
               ),
             ),
           ),
@@ -323,54 +314,71 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       ),
     );
   }
-  void _launchPhoneDialer(String phoneNumber) async {
-    String url = 'tel:$phoneNumber';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+}
+void _launchPhoneDialer(String phoneNumber) async {
+  String url = 'tel:$phoneNumber';
+  try {
+    await launch(url);
+  } on PlatformException catch (e) {
+    print("Failed to launch Phone: $e");
+  }
+}
+void _launchMessageApp(String phoneNumber) async {
+  String url = 'sms:$phoneNumber';
+  try {
+    await launch(url);
+  } on PlatformException catch (e) {
+    if (kDebugMode) {
+      print("Failed to launch SMS: $e");
     }
   }
-  Widget contact(JobObject item) {
-    return InkWell(
-      onTap:(){
-        _launchPhoneDialer(item.phn);
-      },
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Container(
-                height: 70,
-                width: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: HexColor("#4CE4B1"),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.call,
+}
+
+Widget contact(JobObject item, BuildContext context) {
+  return InkWell(
+    onTap:(){
+      _launchPhoneDialer(item.phn);
+    },
+    child: Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Container(
+              height: 70,
+              width: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: HexColor("#4CE4B1"),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Icon(
+                    Icons.call,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    AppLocalizations.of('Call'),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      AppLocalizations.of('Call'),
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
+            ),
+            InkWell(
+              onTap: (){
+                print('Message Printed!!!!!!!!!!!');
+                _launchMessageApp(item.phn);
+              },
+              child: Container(
                 height: 70,
                 width: 80,
                 decoration: BoxDecoration(
@@ -390,359 +398,368 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     Text(
                       AppLocalizations.of('Message'),
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  API.showLoading("", context);
-                  API.respondToBooking(item.bookid, 7, context).then((value) async {
-                    Navigator.of(context, rootNavigator: true).pop();
-                    Navigator.pushReplacementNamed(context, Routes.HOME);
-                    await FlutterRingtonePlayer.play(fromAsset: 'assets/cancel_tone.wav');
-                  },
-                  );
+            ),
+            InkWell(
+              onTap: () {
+                API.showLoading("", context);
+                API.respondToBooking(item.bookid, 7, context).then((value) async {
+                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.pushReplacementNamed(context, Routes.HOME);
+                  await FlutterRingtonePlayer().play(fromAsset: 'assets/cancel_tone.wav');
                 },
-                child: Container(
-                  height: 70,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: HexColor("#BEC2CE"),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Icon(
-                        Icons.delete_forever,
+                );
+              },
+              child: Container(
+                height: 70,
+                width: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: HexColor("#BEC2CE"),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Icon(
+                      Icons.delete_forever,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      AppLocalizations.of(AppLocalizations.of(Provider.of<CurrentJobsPro>(context, listen: false).jobs[0].status==1?'Reject':'Cancel')),
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      Text(
-                        AppLocalizations.of(AppLocalizations.of(Provider.of<CurrentJobsPro>(context).jobs[index].status==99?'Reject':'Cancel')),
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget tripFare(JobObject item, BuildContext context) {
+  return Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    child: Padding(
+      padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            AppLocalizations.of('TRIP FARE'),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).disabledColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of('ABC'),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+              Text(
+                '\$15.00',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(item.paymentmethod),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+              Text(
+                '\$10.00',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of('Paid amount'),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+              Text(
+                '£${item.total_amount}',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget noted(JobObject item, BuildContext context) {
+  return Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    child: Padding(
+      padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      AppLocalizations.of('Passengers: ${item.passengers}'),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
                       ),
-                    ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      AppLocalizations.of('Large Luggage: ${item.luggage}'),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      AppLocalizations.of('Flight NO: ${item.flightNo}'),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      AppLocalizations.of('Small Luggage: ${item.luggage}'),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      AppLocalizations.of('Notes: ${item.pickupnote}${item.dropnote}'),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget dropOffAddress(JobObject item, BuildContext context) {
+  return Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    child: Padding(
+      padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+      child: Row(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of('DROP OFF'),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).disabledColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                AppLocalizations.of(item.dropaddress),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget pickupAddress(JobObject item, BuildContext context) {
+  return Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    child: Padding(
+      padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+      child: Row(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of('PICKUP'),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).disabledColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                AppLocalizations.of(item.pickupadress),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget userDetailbar(JobObject item, BuildContext context) {
+  return Container(
+    color: HexColor("#BEC2CE"),
+    child: Padding(
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(item.name),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(DateFormat('dd-MM-yyy').format(DateTime.parse(item.date.toString())),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Text('${DateFormat('HH:mm').format(DateTime.parse(item.date.toString()))} hrs',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                '£${item.total_amount}',
+                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Text(
+                '${item.distance} Miles',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleSmall!.color,
+                ),
+              ),
+              Container(
+                height: 24,
+                width: 85,
+                color: Theme.of(context).primaryColor,
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(item.paymentmethod),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ConstanceData.secoundryFontColor,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  Widget tripFare(JobObject item) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              AppLocalizations.of('TRIP FARE'),
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).disabledColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of('ABC'),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-                Text(
-                  '\$15.00',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(item.paymentmethod),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-                Text(
-                  '\$10.00',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of('Paid amount'),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-                Text(
-                  '\$${item.total_amount}',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget noted(JobObject item) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              AppLocalizations.of('NOTED'),
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).disabledColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Wrap(
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of('Pickup:${item.pickupnote}\nDrop:${item.dropnote}'),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget dropOffAddress(JobObject item) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-        child: Row(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of('DROP OFF'),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).disabledColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  AppLocalizations.of(item.dropaddress),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget pickupAddress(JobObject item) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-        child: Row(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of('PICKUP'),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).disabledColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  AppLocalizations.of(item.pickupadress),
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget userDetailbar(JobObject item) {
-    return Container(
-      color: Theme.of(context).dividerColor,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                ConstanceData.userImage,
-                height: 50,
-                width: 50,
-              ),
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(item.name),
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      height: 24,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(item.phn),
-                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: ConstanceData.secoundryFontColor,
-                              ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Container(
-                      height: 24,
-                      width: 74,
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(item.paymentmethod),
-                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: ConstanceData.secoundryFontColor,
-                              ),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-            Expanded(
-              child: SizedBox(),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  '\$${item.total_amount}.00',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
-                      ),
-                ),
-                Text(
-                  '${item.distance} km',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }
 
 class MySeparator extends StatelessWidget {
   final double height;
   final Color color;
 
-  const MySeparator({this.height = 1, this.color = Colors.black});
+  const MySeparator({super.key, this.height = 1, this.color = Colors.black});
 
   @override
   Widget build(BuildContext context) {

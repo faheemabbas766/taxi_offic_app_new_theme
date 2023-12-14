@@ -1,9 +1,7 @@
-import 'package:animator/animator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:taxi_app/presentation/Language/appLocalizations.dart';
 import 'package:taxi_app/presentation/constance/constance.dart';
 import 'dart:convert';
 import 'genericnotifications.dart';
@@ -26,404 +24,6 @@ import 'providers/completedjobspro.dart';
 import 'providers/currentjobspro.dart';
 import 'providers/pobmappro.dart';
 import 'providers/tripdetailspro.dart';
-
-Widget _showMessage(BuildContext context, message) {
-  return Material(
-    type: MaterialType.transparency,
-    child: Padding(
-      padding: EdgeInsets.only(top:200,right: 10, left: 10, bottom: MediaQuery.of(context).padding.bottom),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 16,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 24, left: 24),
-              child: Animator<Offset>(
-                tween: Tween<Offset>(
-                  begin: const Offset(0, 0.5),
-                  end: const Offset(0, 0),
-                ),
-                duration: const Duration(seconds: 1),
-                cycles: 1,
-                builder: (context, animate, _) => SlideTransition(
-                  position: animate.animation,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
-                          blurRadius: 12,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 12,
-            right: 0,
-            left: 0,
-            bottom: 16,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12, left: 12),
-              child: Animator<Offset>(
-                tween: Tween<Offset>(
-                  begin: const Offset(0, 0.5),
-                  end: const Offset(0, 0),
-                ),
-                duration: const Duration(milliseconds: 700),
-                cycles: 1,
-                builder: (context, animate, _) => SlideTransition(
-                  position: animate.animation,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
-                          blurRadius: 6,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Animator<Offset>(
-            tween: Tween<Offset>(
-              begin: Offset(0, 0.4),
-              end: Offset(0, 0),
-            ),
-            duration: const Duration(milliseconds: 700),
-            cycles: 1,
-            builder: (context, animate, _) => SlideTransition(
-              position: animate.animation,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 24),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).dividerColor,
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of("${jsonDecode(message.data['Customer_Detail'])["CUS_NAME"]}"),
-                                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).textTheme.titleLarge!.color,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 24,
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(15),
-                                          ),
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            AppLocalizations.of("Ph# ${jsonDecode(message.data['Customer_Detail'])["CUS_PHONE"]}"),
-                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: ConstanceData.secoundryFontColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 4,
-                                      ),
-                                      Container(
-                                        height: 24,
-                                        width: 74,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(15),
-                                          ),
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            AppLocalizations.of(
-                                                jsonDecode(message.data['booking_detail'])[
-                                                "BM_PAY_METHOD"]
-                                                    .toString() ==
-                                                    "1"
-                                                    ? "Cash"
-                                                    : jsonDecode(message.data['booking_detail'])[
-                                                "BM_PAY_METHOD"]
-                                                    .toString() ==
-                                                    "2"
-                                                    ? "Card"
-                                                    : "Account"),
-                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: ConstanceData.secoundryFontColor,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const Expanded(
-                                child: SizedBox(),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Text('${jsonDecode(message.data['booking_detail'])["total_amount"].toString()} £',
-                                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).textTheme.titleLarge!.color,
-                                    ),
-                                  ),
-                                  Text(
-                                    '2.2 km',
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      color: Theme.of(context).disabledColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 0.5,
-                          color: Theme.of(context).disabledColor,
-                        ),
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: RouteManager.width / 70),
-                                width: RouteManager.width / 1.5,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: RouteManager.width / 20),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: RouteManager.width / 70),
-                                      width: RouteManager.width / 1.5,
-                                      height: 280,
-                                      child: ListView.builder(
-                                        itemCount: bookingStops.length,
-                                        itemBuilder: (context, index) {
-                                          var bookingStop = bookingStops[index];
-                                          bool isFirstStop = index == 0;
-                                          bool isLastStop =
-                                              index == bookingStops.length - 1;
-
-                                          String title;
-                                          Color
-                                          stopColor; // Define a color for the stop based on your conditions
-                                          Color
-                                          navigationColor; // Define a color for the navigation button based on your conditions
-                                          String address = bookingStop[
-                                          'BD_LOCATION'] ??
-                                              "abc"; // Use an empty string as default
-
-                                          if (isFirstStop) {
-                                            title = "Pick Up";
-
-                                            stopColor = Colors.black;
-                                            navigationColor = Colors.green;
-                                            // Set the navigation button color for the first stop
-                                          } else if (isLastStop) {
-                                            title = "Destination";
-                                            stopColor = Colors.black;
-                                            navigationColor = Colors
-                                                .red; // Set the navigation button color for the last stop
-                                          } else {
-                                            title = "Stop $index";
-                                            stopColor = Colors.black;
-                                            navigationColor = const Color(0xff0038FF);
-                                            // Set the navigation button color for intermediate stops
-                                          }
-                                          return ListTile(
-                                            title: Text(
-                                              title,
-                                              style: TextStyle(
-                                                color: stopColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: RouteManager.width / 25,
-                                              ),
-                                            ),
-                                            subtitle: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  address,
-                                                  style: TextStyle(
-                                                    fontSize: RouteManager.width / 30,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            trailing: IconButton(
-                                              icon: Icon(Icons.navigation_rounded,
-                                                  color:
-                                                  navigationColor), // Use the navigation button color
-                                              onPressed: () {
-                                                if (isLastStop) {
-                                                  var destinationStop = bookingStop;
-                                                  openGoogleMapsNavigationToDestination(
-                                                    double.parse(
-                                                        destinationStop['BD_LAT']),
-                                                    double.parse(
-                                                        destinationStop['BD_LANG']),
-                                                  );
-                                                } else {
-                                                  var startStop = bookingStop;
-                                                  openGoogleMapsNavigationToDestination(
-                                                    double.parse(startStop['BD_LAT']),
-                                                    double.parse(
-                                                        startStop['BD_LANG']),
-                                                  );
-                                                }
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 0.5,
-                          color: Theme.of(context).disabledColor,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 14, left: 14, top: 10, bottom: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              InkWell(
-                                onTap: () {
-                                  API.showLoading("", context);
-                                  API.respondToBooking(
-                                      int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]), 7, context).then((value) async {
-                                      Navigator.of(context, rootNavigator: true).pop();
-                                      Navigator.of(context, rootNavigator: true).pop();
-                                      await FlutterRingtonePlayer.play(fromAsset: 'assets/cancel_tone.wav');
-                                    },
-                                  );
-                                },
-                                child: Container(
-                                  height: 32,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Theme.of(context).scaffoldBackgroundColor,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      AppLocalizations.of('Reject'),
-                                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).disabledColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              InkWell(
-                                onTap: () async {
-                                  API.showLoading("", context);
-                                  API.respondToBooking(
-                                      int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]),
-                                      2, context).then((value) {
-                                      Navigator.of(context, rootNavigator: true).pop();
-                                      Navigator.of(context, rootNavigator: true).pop();
-                                      Navigator.of(context)
-                                          .pushNamed(Routes.JOBS);
-                                    },
-                                  );
-                                  await FlutterRingtonePlayer.play(fromAsset: 'assets/accept_tone.mp3');
-                                },
-                                child: Container(
-                                  height: 32,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      AppLocalizations.of('ACCEPT'),
-                                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: ConstanceData.secoundryFontColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 String token = '';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -459,16 +59,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   jsonDecode(message.data['booking_detail'])["BM_SN"];
   map["Booking_stops"] =
   jsonDecode(message.data['Booking_stops']);
-
   GenericNotifications.showNotification(
     id: 1,
     title: "New Booking",
     body: "Admin Assigned you a Booking",
     payload: jsonEncode(map),
   );
-  if (kDebugMode) {
-    print("HANDLING A BACKGROUND MESSAGE : ${message.messageId}");
-  }
+  print("HANDLING A BACKGROUND MESSAGE : ${message.messageId}");
+  FlutterRingtonePlayer().play();
+
 }
 
 void main() async {
@@ -503,15 +102,69 @@ void main() async {
   if (kDebugMode) {
     print('Permission granted: ${settings.authorizationStatus}');
   }
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     if (kDebugMode) {
       print("------------------------------------------------------------------------------------------------");
     }
     if (kDebugMode) {
       print("RECEIVED FOREGROUND MESSAGE.DATA :${message.data}:");
     }
-    bookingStops = jsonDecode(message.data['Booking_stops']);
-    if (message.data.toString() == "{title: Admin Ended ur shift}") {
+    if(message.data.toString().contains('Admin cancelled this booking')) {
+      FlutterRingtonePlayer().playNotification();
+      Navigator.of(RouteManager.context!).pushNamedAndRemoveUntil(Routes.HOME, (route) => false,);
+      showDialog(
+        context: RouteManager.context!,
+        builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.info,
+                    size: 40,
+                    color: Colors.red,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Admin cancelled Booking',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      const snackBar = SnackBar(
+        content: Text('Admin cancelled your Booking'),
+        duration: Duration(seconds: 10), // Duration for how long the SnackBar should be visible
+      );
+      ScaffoldMessenger.of(RouteManager.context!).showSnackBar(snackBar);
+
+    }
+    else if (message.data.toString() == "{title: Admin Ended ur shift}") {
       API.postlocation = false;
       Provider.of<HomePro>(RouteManager.context!, listen: false).shiftid = -1;
       Provider.of<HomePro>(RouteManager.context!, listen: false).vehicleid = -1;
@@ -581,18 +234,18 @@ void main() async {
       });
       return;
     }
-    FlutterRingtonePlayer.playNotification();
-    API.respondToBooking(int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]), 99, RouteManager.context!).then((value){
-        Navigator.of(RouteManager.context!).pushNamed(Routes.JOBS);
-      },
-    );
-    if (kDebugMode) {
-      print('Handling a foreground message: ${message.messageId}');
-      print('Message data: ${message.data}');
-      print("VEHICLE--------->>>>>>>>>>>>>>>>>>>>>>>${jsonDecode(message.data['vehicle'])["CAR_NAME"]}");
-      if (message.notification != null) {
-        print('Message notification: ${message.notification?.title}');
-        print('Message notification: ${message.notification?.body}');
+    else{
+      bookingStops = jsonDecode(message.data['Booking_stops']);
+      FlutterRingtonePlayer().playNotification();
+      Navigator.of(RouteManager.context!).pushNamed(Routes.JOBS);
+      if (kDebugMode) {
+        print('Handling a foreground message: ${message.messageId}');
+        print('Message data: ${message.data}');
+        print("VEHICLE--------->>>>>>>>>>>>>>>>>>>>>>>${jsonDecode(message.data['vehicle'])["CAR_NAME"]}");
+        if (message.notification != null) {
+          print('Message notification: ${message.notification?.title}');
+          print('Message notification: ${message.notification?.body}');
+        }
       }
     }
   });
