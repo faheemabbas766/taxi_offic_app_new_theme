@@ -23,9 +23,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
       key: _scaffoldKey,
       drawer: SizedBox(
         width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
-        child: Drawer(
+        child: const Drawer(
           child: AppDrawer(
-            selectItemName: 'Vehicles',
+            selectItemName: 'Vehicle',
           ),
         ),
       ),

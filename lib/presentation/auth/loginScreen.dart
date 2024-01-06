@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:animator/animator.dart';
 import 'package:fluttertoast/fluttertoast.dart'as ft;
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,12 @@ import '../../Api & Routes/routes.dart';
 import '../../providers/homepro.dart';
 import '../Language/appLocalizations.dart';
 import '../constance/constance.dart';
+import 'package:http/http.dart'as http;
+
+import '../splashScreen.dart';
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -19,6 +25,46 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController username = TextEditingController();
   TextEditingController pwd = TextEditingController();
   bool obscure = true;
+  Future<void>getUserInfo(int userId)async {
+    var headers = {
+      'token': Provider.of<HomePro>(context, listen: false).token,
+    };
+    var request = http.MultipartRequest('POST', Uri.parse('https://minicab.imdispatch.co.uk/api/getsingleuserdetail'));
+    request.fields.addAll({
+      'driver_id': userId.toString(),
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String responseData = await response.stream.bytesToString();
+      handleSuccessResponse(responseData);
+    }
+    else {
+      if (kDebugMode) {
+        print(response.reasonPhrase);
+      }
+    }
+
+  }
+  void handleSuccessResponse(String responseData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> responseMap = json.decode(responseData);
+    Map<String, dynamic> userData = responseMap['Userdata'];
+    totalHours = userData['totalHours'].toString();
+    totalTodayBooking = userData['totalTodayBooking'].toString();
+    totalEarning = userData['totalEarning'].toString();
+    totalDistance = userData['totalDistance'].toString();
+    userName = userData['userName'];
+    prefs.setString('totalHours', totalHours);
+    prefs.setString('totalTodayBooking', totalTodayBooking);
+    prefs.setString('totalEarning', totalEarning);
+    prefs.setString('totalDistance', totalDistance);
+    prefs.setString('userName', userName);
+    print('User INFOOOOOOOOOOOOOO Done:::::::::::::::::::');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,7 +291,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       prefs.setString('username', username.text.toString()).then((value) {prefs.setString('userid',
                                         Provider.of<HomePro>(context, listen: false).userid.toString(),).then(
                                             (value) {prefs.setString('token', Provider.of<HomePro>(context, listen: false).token).then(
-                                              (value) {
+                                              (value) async {
+
+                                                await getUserInfo(Provider.of<HomePro>(context, listen: false).userid);
                                             if (kDebugMode) {
                                               print(
                                                 "SHARED PREFERENCES SAVEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",

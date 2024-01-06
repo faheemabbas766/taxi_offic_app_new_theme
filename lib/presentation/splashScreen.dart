@@ -50,6 +50,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> responseMap = json.decode(responseData);
     Map<String, dynamic> userData = responseMap['Userdata'];
+    print(userData.toString());
     totalHours = userData['totalHours'].toString();
     totalTodayBooking = userData['totalTodayBooking'].toString();
     totalEarning = userData['totalEarning'].toString();

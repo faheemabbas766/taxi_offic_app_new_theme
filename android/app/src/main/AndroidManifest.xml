@@ -7,8 +7,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
-
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <application
         android:label="My Taxi"
         android:name="${applicationName}"
@@ -41,6 +40,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDtpG_aelSiirqtT-8rahx2UueE6XEfTCc"/>
+            android:value="AIzaSyD7nCnza24yu8qP2q5B0o7y0Qg54oUdNE4"/>
     </application>
 </manifest>

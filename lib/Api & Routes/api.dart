@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,11 +13,8 @@ import 'package:taxi_app/Entities/vehicles.dart';
 import 'package:taxi_app/providers/currentjobspro.dart';
 import '../main.dart';
 import '../presentation/jobs/completedjobs.dart';
-import '../presentation/jobs/currentjobs.dart';
 import '../presentation/jobs/pendingjobs.dart';
-import '../providers/completedjobspro.dart';
 import '../providers/homepro.dart';
-import '../providers/pendingjobspro.dart';
 import '../providers/startshiftpro.dart';
 import 'global.dart';
 import 'routes.dart';
@@ -302,6 +300,7 @@ class API {
               print("res of I IS : : :$i");
             }
             JobObject jj = JobObject(
+              i['BM_JOB_NO'],
               int.parse(i["BM_SN"]??"999"),
               i["CUS_NAME"]?? "Name",
               i["CUS_PHONE"]?? "Phone",
@@ -391,6 +390,7 @@ class API {
           completedJobs = [];
           for (var i in res["data"]) {
             completedJobs.add(JobObject(
+                i['BM_JOB_NO'],
                 int.parse(i["BM_SN"]),
                 i["CUS_NAME"],
                 i["CUS_PHONE"],
@@ -424,7 +424,7 @@ class API {
                 double.parse(i["BM_DLANG"]),
                 i["BM_DISTANCE"].toString(),
                 i["BM_DISTANCE_TIME"].toString(),
-                i["FLIGHT_NUMBER"].toString()?? ''
+                i["FLIGHT_NUMBER"].toString()
             ),);
           }
         }
@@ -482,7 +482,8 @@ class API {
             // print("res of I IS : : :"+i.toString());
             pendingJobs.add(
               JobObject(
-                  int.parse(i["BM_SN"])?? 0,
+                  i['BM_JOB_NO'],
+                  int.parse(i["BM_SN"]),
                   i["CUS_NAME"],
                   i["CUS_PHONE"],
                   i["BM_PICKUP"],
@@ -513,9 +514,9 @@ class API {
                   double.parse(i["BM_PLANG"]?? 0),
                   double.parse(i["BM_DLAT"]?? 0),
                   double.parse(i["BM_DLANG"]?? 0),
-                  i["BM_DISTANCE"].toString()?? '',
-                  i["BM_DISTANCE_TIMe"].toString()?? '',
-                  i["FLIGHT_NUMBER"].toString()?? ''
+                  i["BM_DISTANCE"].toString(),
+                  i["BM_DISTANCE_TIMe"].toString(),
+                  i["FLIGHT_NUMBER"].toString()
               ),
             );
           }
@@ -626,21 +627,6 @@ class API {
         if (kDebugMode) {
           print(
               "AAALLLLLLLLLLLLLLL GOOOOOOOOOOOOOOOOOODDDDDDDDDDDDDDDDDDDDDDDD Get Vechicles by id");
-        }
-        for (var i in res["data"]) {
-          // if(Provider.of<HomePro>(context,listen:false).shiftid!=-1 && Provider.of<HomePro>(context,listen:false).vehicleid!=-1)
-          // {
-          //   if(i["uv_id"]==Provider.of<HomePro>(context,listen:false).vehicleid)
-          //   {
-
-          //   }
-          // }
-          // Provider.of<StartShiftPro>(context, listen: false).vehicles.add(
-          //       Vehicle(
-          //           int.parse(i["uv_id"]),
-          //           i["uv_make"],
-          //           i["uv_model"]),
-          //     );
         }
         Provider.of<StartShiftPro>(context, listen: false).vehicles = [];
         for (var i in res["data"]) {
@@ -795,12 +781,36 @@ class API {
     }
   }
 
-  static Future<bool> postLocation(int shiftid,BuildContext context) async {
+  static double calculateDistance(lat1, lon1, lat2, lon2){
+    var p = 0.017453292519943295;
+    var a = 0.5 - cos((lat2 - lat1) * p)/2 +
+        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  static double plat = 0;
+  static double plon = 0;
+  static late int speed;
+  static DateTime ptime = DateTime.now();
+
+  static Future<bool> postLocation(int shiftid, BuildContext context) async {
     var pos = await Geolocator.getCurrentPosition();
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse("https://minicab.imdispatch.co.uk/api/updatelocation"),
-    );
+    double distance = calculateDistance(plat, plon, pos.latitude, pos.longitude);
+    distance = distance*1000;
+    Duration timeDifference = DateTime.now().difference(ptime);
+    int secondsDifference = timeDifference.inSeconds;
+    int j = -1;
+    if (distance <= 0.001) {
+      speed = 10;
+    } else {
+      speed = secondsDifference != 0 ? (distance/secondsDifference).round() : 0;
+      j= speed;
+      print('Speed::::::::$j');
+      plat = pos.latitude;
+      plon = pos.longitude;
+      ptime = DateTime.now();
+    }
+    var request = http.MultipartRequest('POST', Uri.parse("https://minicab.imdispatch.co.uk/api/updatelocation"),);
     request.headers.addAll({
       'Content-type': 'multipart/form-data',
       'Accept': 'application/json',
@@ -808,8 +818,9 @@ class API {
     });
     request.fields.addAll({
       'id': shiftid.toString(),
-      'SHF_LATT': pos.latitude.toString(),
-      'SHF_LANG': pos.longitude.toString(),
+      'SHF_LATT': '${pos.latitude}',
+      'SHF_LANG': '${pos.longitude}',
+      'speed': '$j', // Include the speed in the request
     });
     http.StreamedResponse response;
     try {
@@ -818,33 +829,23 @@ class API {
             throw "TimeOut";
           });
       var responsed = await http.Response.fromStream(response);
-      if (response.statusCode == 401){
+      if (response.statusCode == 200) {
+        print("POST LOCATION IS:::::::::::::::::$postlocation\n"
+            "Speed::$j   Lat::${pos.latitude}   ${pos.longitude}");
+        print("POST LOCATION RESPONSE IS : : : : : :${responsed.body}");
+        return true;
+      } else if (response.statusCode == 401){
         SharedPreferences.getInstance().then((prefs) {
           prefs.clear();
         });
-
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.LOGIN,
-              (route) => false,
-        );
-      }
-      if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print("POST LOCATION RESPONSE IS : : : : : :${responsed.body}");
-        }
-        return true;
-      } else {
-        print(
-            "STATUS CODE IS : : : : : : : : : :${response.statusCode}: ${responsed.body}");
+        Navigator.of(context).pushNamedAndRemoveUntil(Routes.LOGIN, (route) => false,);
+        return false;
+      }else {
+        print("STATUS CODE IS::::::::::${response.statusCode}: ${responsed.body}");
         return false;
       }
     } catch (e) {
       print("ROLAAAAAAAAAAAAAAAAAAAAAA$e");
-      // Navigator.of(context, rootNavigator: true).pop();
-      // ft.Fluttertoast.showToast(
-      //   msg: "failed",
-      //   toastLength: ft.Toast.LENGTH_LONG,
-      // );
       return false;
     }
   }

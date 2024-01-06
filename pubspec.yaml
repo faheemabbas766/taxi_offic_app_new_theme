@@ -39,17 +39,21 @@ dependencies:
   google_maps: ^6.3.0
   image_picker: ^1.0.4
   file_picker: ^6.1.1
+  wakelock_plus: ^1.1.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+fixed: false
+ui:
+  -
 flutter:
-  assets:  
-  - assets/
-  - assets/images/
-  - jsonFile/darkmapstyle.json
-  - jsonFile/lightmapstyle.json
-  - jsonFile/languagetext.json
+  assets:
+    - assets/
+    - assets/images/
+    - jsonFile/darkmapstyle.json
+    - jsonFile/lightmapstyle.json
+    - jsonFile/languagetext.json
 
 
   uses-material-design: true

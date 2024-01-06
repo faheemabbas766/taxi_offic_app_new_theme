@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +26,66 @@ import 'providers/currentjobspro.dart';
 import 'providers/pobmappro.dart';
 import 'providers/tripdetailspro.dart';
 String token = '';
+void showFutureJobDialog(BuildContext context, int bid) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          int seconds = 30;
+          late Timer timer;
+          void startTimer() {
+            timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+              if (seconds > 0) {
+                seconds--;
+                setState;
+              } else {
+                timer.cancel();
+                Navigator.of(context).pop();
+              }
+            });
+          }
+          startTimer();
+          return AlertDialog(
+            title: const Text('Admin has assigned you a future job. Do you accept?'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text('Time remaining: $seconds seconds'),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () async {
+                        FlutterRingtonePlayer().stop();
+                        await FlutterRingtonePlayer().play(fromAsset: 'assets/accept_tone.mp3');
+                        timer.cancel();
+                        Navigator.of(context).pop();
+                        API.respondToBooking(bid, 2, context);
+                      },
+                      child: const Text('Accept'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        FlutterRingtonePlayer().stop();
+                        await FlutterRingtonePlayer().play(fromAsset: 'assets/cancel_tone.wav');
+                        timer.cancel();
+                        Navigator.of(context).pop();
+                        API.respondToBooking(bid, 3, context);
+                      },
+                      child: const Text('Reject'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -66,10 +127,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     payload: jsonEncode(map),
   );
   print("HANDLING A BACKGROUND MESSAGE : ${message.messageId}");
-  FlutterRingtonePlayer().play();
-
+  FlutterRingtonePlayer().play(fromAsset: 'assets/job_tone.mp3');
 }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown,]);
@@ -109,7 +168,12 @@ void main() async {
     if (kDebugMode) {
       print("RECEIVED FOREGROUND MESSAGE.DATA :${message.data}:");
     }
-    if(message.data.toString().contains('Admin cancelled this booking')) {
+    if(message.data['title'].contains('Admin assign you future job')) {
+      FlutterRingtonePlayer().play(fromAsset:'assets/job_tone.mp3');
+      print('booking ID::::::::::::::::::::::::::::'+jsonDecode(message.data['booking_detail'])["BM_SN"]);
+      showFutureJobDialog(RouteManager.context!,int.parse(jsonDecode(message.data['booking_detail'])["BM_SN"]));
+    }
+    else if(message.data.toString().contains('Admin cancelled this booking')) {
       FlutterRingtonePlayer().playNotification();
       Navigator.of(RouteManager.context!).pushNamedAndRemoveUntil(Routes.HOME, (route) => false,);
       showDialog(
@@ -349,6 +413,7 @@ class _MyAppState extends State<MyApp> {
       theme: AppTheme.getTheme(),
       routes: routes,
       initialRoute: Routes.SPLASH,
+      // home: MapRouteScreen()
     );
   }
 }

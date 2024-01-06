@@ -1,4 +1,5 @@
 class JobObject {
+  late String invoiceId;
   late int bookid;
   late String name;
   late String phn;
@@ -23,6 +24,7 @@ class JobObject {
   int status = 0;
 
   JobObject(
+      this.invoiceId,
       this.bookid,
       this.name,
       this.phn,

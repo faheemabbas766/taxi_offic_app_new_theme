@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:animator/animator.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/presentation/home/riderList.dart';
 import 'package:taxi_app/presentation/splashScreen.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../Api & Routes/api.dart';
 import '../../Api & Routes/routes.dart';
 import '../../providers/homepro.dart';
@@ -44,6 +46,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WakelockPlus.enable();
+    RouteManager.context = context;
+    Timer.periodic(
+      const Duration(seconds: 3),
+          (Timer t) async {
+        if (API.postlocation) {
+          await API.postLocation(Provider.of<HomePro>(context, listen: false).shiftid, context);
+        }
+      },
+    );
     if(Provider.of<HomePro>(context, listen: false).shiftid!=-1) {
       setState(() {
         isOffline = true;
@@ -53,162 +65,158 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     RouteManager.context = context;
-    seticonimage(context);
-    seticonimage2(context);
-    seticonimage3(context);
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: Scaffold(
-        key: _scaffoldKey,
-        drawer: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
-          child: const Drawer(
-            child: AppDrawer(
-              selectItemName: 'Home',
+      child: SafeArea(
+        child: Scaffold(
+          key: _scaffoldKey,
+          drawer: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
+            child: const Drawer(
+              child: AppDrawer(
+                selectItemName: 'Home',
+              ),
             ),
           ),
-        ),
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          automaticallyImplyLeading: false,
-          title: Row(
-            children: <Widget>[
-              SizedBox(
-                height: AppBar().preferredSize.height,
-                width: AppBar().preferredSize.height + 40,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () {
-                        _scaffoldKey.currentState!.openDrawer();
-                      },
-                      child: Icon(
-                        Icons.dehaze,
-                        color: Theme.of(context).textTheme.titleLarge!.color,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: <Widget>[
+                SizedBox(
+                  height: AppBar().preferredSize.height,
+                  width: AppBar().preferredSize.height + 40,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                        child: Icon(
+                          Icons.dehaze,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: !isOffline
-                    ? Text(
-                        AppLocalizations.of('OffLine'),
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.titleLarge!.color,
-                            ),
-                        textAlign: TextAlign.center,
-                      )
-                    : Text(
-                        AppLocalizations.of('Online'),
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.titleLarge!.color,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-              ),
-              SizedBox(
-                height: AppBar().preferredSize.height,
-                width: AppBar().preferredSize.height + 40,
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: Switch(
-                    activeColor: Theme.of(context).primaryColor,
-                    value: isOffline,
-                    onChanged: (bool value) async {
-                      setState(() {
-                        isLoading = true;
-                        isOffline = value;
-                      });
-                      String? userid = (await SharedPreferences.getInstance()).getString("userid");
-                      if(value){
-                        if(await API.startShift(int.parse(userid!),context)){
-                          FlutterRingtonePlayer().playNotification();
+                Expanded(
+                  child: !isOffline
+                      ? Text(
+                          AppLocalizations.of('OffLine'),
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                          textAlign: TextAlign.center,
+                        )
+                      : Text(
+                          AppLocalizations.of('Online'),
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.titleLarge!.color,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                ),
+                SizedBox(
+                  height: AppBar().preferredSize.height,
+                  width: AppBar().preferredSize.height + 40,
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: Switch(
+                      activeColor: Theme.of(context).primaryColor,
+                      value: isOffline,
+                      onChanged: (bool value) async {
+                        setState(() {
+                          isLoading = true;
                           isOffline = value;
-                        }else{
-                          isOffline = !isOffline;
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text(
-                                  'Check your Internet connection!!!')));
+                        });
+                        String? userid = (await SharedPreferences.getInstance()).getString("userid");
+                        if(value){
+                          if(await API.startShift(int.parse(userid!),context)){
+                            FlutterRingtonePlayer().playNotification();
+                            isOffline = value;
+                          }else{
+                            isOffline = !isOffline;
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text(
+                                    'Check your Internet connection!!!')));
+                          }
                         }
-                      }
-                      else{
-                        if(await API.stopShift(
-                          int.parse(userid!),
-                          Provider.of<HomePro>(context, listen: false).shiftid,
-                          context,
-                        )){
-                          API.postlocation = false;
-                        }else{
-                          isOffline = !isOffline;
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text(
-                                  'Check your Internet connection!!!')));
+                        else{
+                          if(await API.stopShift(
+                            int.parse(userid!),
+                            Provider.of<HomePro>(context, listen: false).shiftid,
+                            context,
+                          )){
+                            API.postlocation = false;
+                          }else{
+                            isOffline = !isOffline;
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text(
+                                    'Check your Internet connection!!!')));
+                          }
                         }
-                      }
-                      isLoading = false;
-                      setState(() {
-                      });
-                    },
+                        isLoading = false;
+                        setState(() {
+                        });
+                      },
+                    ),
                   ),
                 ),
-              ),
+              ],
+            ),
+          ),
+          body: isLoading? const Center(child: CircularProgressIndicator(),)
+              :Stack(
+            children: <Widget>[
+              // GoogleMap(
+              //   mapType: MapType.normal,
+              //   initialCameraPosition: CameraPosition(
+              //     target: LatLng(lat, long),
+              //     zoom: 10,
+              //   ),
+              //   onMapCreated: (GoogleMapController controller) {
+              //     mapController = controller;
+              //     setLDMapStyle();
+              //   },
+              //   markers: Set<Marker>.of(getMarkerList(context).values),
+              //   polylines: Set<Polyline>.of(getPolyLine(context).values),
+              // ),
+              !isOffline
+                  ? Column(
+                      children: <Widget>[
+                        offLineMode(),
+                        const Expanded(
+                          child: SizedBox(),
+                        ),
+                        myLocation(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        offLineModeDetail(),
+                        Container(
+                          height: MediaQuery.of(context).padding.bottom,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                        )
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        onlineMode(),
+                        Expanded(
+                          child: Image.asset(
+                              'assets/abc.gif',fit: BoxFit.cover),
+                        ),
+                        offLineModeDetail(),
+                      ],
+                    ),
             ],
           ),
-        ),
-        body: isLoading? const Center(child: CircularProgressIndicator(),)
-            :Stack(
-          children: <Widget>[
-            // GoogleMap(
-            //   mapType: MapType.normal,
-            //   initialCameraPosition: CameraPosition(
-            //     target: LatLng(lat, long),
-            //     zoom: 20,
-            //   ),
-            //   onMapCreated: (GoogleMapController controller) {
-            //     mapController = controller;
-            //     setLDMapStyle();
-            //   },
-            //   markers: Set<Marker>.of(getMarkerList(context).values),
-            //   polylines: Set<Polyline>.of(getPolyLine(context).values),
-            // ),
-            !isOffline
-                ? Column(
-                    children: <Widget>[
-                      offLineMode(),
-                      const Expanded(
-                        child: SizedBox(),
-                      ),
-                      myLocation(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      offLineModeDetail(),
-                      Container(
-                        height: MediaQuery.of(context).padding.bottom,
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                      )
-                    ],
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      onlineMode(),
-                      const Expanded(
-                        child: SizedBox(),
-                      ),
-                      myLocation(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      offLineModeDetail(),
-                    ],
-                  ),
-          ],
         ),
       ),
     );
@@ -254,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
-                          new BoxShadow(
+                          BoxShadow(
                             color: AppTheme.isLightTheme ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
                             blurRadius: 12,
                           ),
@@ -547,7 +555,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void setLDMapStyle() async {
-    // ignore: unnecessary_null_comparison
     if (mapController != null) {
       if (AppTheme.isLightTheme) {
         mapController.setMapStyle(await DefaultAssetBundle.of(context).loadString("jsonFile/lightmapstyle.json"));
@@ -798,124 +805,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Map<PolylineId, Polyline> getPolyLine(BuildContext context) {
-    Map<PolylineId, Polyline> polylines = <PolylineId, Polyline>{};
-    if (isOffline) {
-      List<LatLng> latlng1 = [
-        LatLng(51.506115, -0.088339),
-        LatLng(51.507129, -0.087974),
-        LatLng(51.509693, -0.087075),
-        LatLng(51.509065, -0.082206),
-        LatLng(51.509159, -0.081173),
-        LatLng(51.509346, -0.080675),
-        LatLng(51.509540, -0.080293),
-        LatLng(51.509587, -0.080282)
-      ];
-      List<LatLng> latlng2 = [
-        LatLng(51.505951, -0.086974),
-        LatLng(51.506051, -0.087634),
-        LatLng(51.506115, -0.088339)
-      ];
-      const PolylineId polylineId = PolylineId('polylineId');
-      final Polyline polyline = Polyline(
-        polylineId: polylineId,
-        color: Theme.of(context).primaryColor,
-        consumeTapEvents: false,
-        points: latlng1,
-        width: 4,
-        startCap: Cap.roundCap,
-        endCap: Cap.roundCap,
-      );
-
-      const PolylineId polylineId1 = PolylineId('polylineId1');
-      List<PatternItem> patterns1 = [PatternItem.dot, PatternItem.gap(1)];
-      final Polyline polyline1 = Polyline(
-        polylineId: polylineId1,
-        color: Theme.of(context).primaryColor,
-        consumeTapEvents: false,
-        points: latlng2,
-        width: 4,
-        startCap: Cap.roundCap,
-        endCap: Cap.roundCap,
-        patterns: patterns1,
-      );
-      polylines.addAll({polylineId: polyline});
-      polylines.addAll({polylineId1: polyline1});
-    }
-    return polylines;
-  }
-
-  Map<MarkerId, Marker> getMarkerList(BuildContext context) {
-    seticonimage(context);
-    seticonimage2(context);
-    seticonimage3(context);
-    Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-    final MarkerId markerId1 = MarkerId("markerId1");
-    final MarkerId markerId2 = MarkerId("markerId2");
-    final MarkerId markerId3 = MarkerId("markerId3");
-    final Marker marker1 = Marker(
-      markerId: markerId1,
-      position: LatLng(lat, long),
-      anchor: const Offset(0.5, 0.5),
-      icon: bitmapDescriptorStartLocation,
-    );
-    if (isOffline) {
-      final Marker marker2 = Marker(
-        markerId: markerId2,
-        position: LatLng(lat2, long2),
-        anchor: const Offset(0.5, 0.5),
-        icon: bitmapDescriptorStartLocation3,
-      );
-
-      final Marker marker3 = Marker(
-        markerId: markerId3,
-        position: LatLng(lat3, long3),
-        anchor: const Offset(0.5, 0.5),
-        icon: bitmapDescriptorStartLocation2,
-      );
-      markers.addAll({markerId2: marker2});
-      markers.addAll({markerId3: marker3});
-    }
-    markers.addAll({markerId1: marker1});
-    return markers;
-  }
-
-  Future seticonimage3(BuildContext context) async {
-    // ignore: unnecessary_null_comparison
-    // if (bitmapDescriptorStartLocation3 == null) {
-    final ImageConfiguration imagesStartConfiguration3 = createLocalImageConfiguration(context);
-    bitmapDescriptorStartLocation3 = await BitmapDescriptor.fromAssetImage(
-      imagesStartConfiguration3,
-      ConstanceData.mylocation3,
-    );
-    setState(() {});
-    // }
-  }
-
-  Future seticonimage2(BuildContext context) async {
-    // ignore: unnecessary_null_comparison
-    // if (bitmapDescriptorStartLocation2 == null) {
-    final ImageConfiguration imagesStartConfiguration2 = createLocalImageConfiguration(context);
-    bitmapDescriptorStartLocation2 = await BitmapDescriptor.fromAssetImage(
-      imagesStartConfiguration2,
-      ConstanceData.mylocation2,
-    );
-    setState(() {});
-    // }
-  }
-
-  Future seticonimage(BuildContext context) async {
-    // ignore: unnecessary_null_comparison
-    // if (bitmapDescriptorStartLocation == null) {
-    final ImageConfiguration imagesStartConfiguration = createLocalImageConfiguration(context);
-    bitmapDescriptorStartLocation = await BitmapDescriptor.fromAssetImage(
-      imagesStartConfiguration,
-      ConstanceData.mylocation1,
-    );
-    setState(() {});
-    // }
-  }
-
   Widget offLineMode() {
     return Animator<double>(
       duration: const Duration(milliseconds: 400),
@@ -925,7 +814,7 @@ class _HomeScreenState extends State<HomeScreen> {
         axis: Axis.horizontal,
         child: Container(
           height: AppBar().preferredSize.height,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).disabledColor,
           child: Padding(
             padding: const EdgeInsets.only(right: 14, left: 14),
             child: Row(
@@ -982,7 +871,7 @@ class _HomeScreenState extends State<HomeScreen> {
         axis: Axis.horizontal,
         child: Container(
           height: AppBar().preferredSize.height,
-          color: Theme.of(context).primaryColorDark,
+          color: Theme.of(context).primaryColor,
           child: Padding(
             padding: const EdgeInsets.only(right: 14, left: 14),
             child: Row(
@@ -1014,7 +903,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Text(
-                      AppLocalizations.of('Hold on you will received a booking soon.'),
+                      AppLocalizations.of('You will received a booking soon.'),
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         color: ConstanceData.secoundryFontColor,
                       ),

@@ -506,7 +506,7 @@ class _SettingScreenState extends State<SettingScreen> {
         width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
         child: const Drawer(
           child: AppDrawer(
-            selectItemName: 'Setting',
+            selectItemName: 'Settings',
           ),
         ),
       ),

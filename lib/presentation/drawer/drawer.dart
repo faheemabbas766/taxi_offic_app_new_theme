@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taxi_app/presentation/jobs/jobview.dart';
 import 'package:taxi_app/presentation/splashScreen.dart';
 import '../../Api & Routes/routes.dart';
 import '../../providers/homepro.dart';
@@ -53,7 +52,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       children: <Widget>[
                         CircleAvatar(
                           backgroundColor: Colors.white,
-                          radius: 30,
+                          radius: 28,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(50),
                             child: Image.asset(
@@ -260,7 +259,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Home') {
-                    Navigator.pushNamed(context, Routes.HOME);
+                    Navigator.pushReplacementNamed(context, Routes.HOME);
                   }
                 },
                 child: Row(
@@ -288,8 +287,10 @@ class _AppDrawerState extends State<AppDrawer> {
                   ],
                 ),
               ),
+
+
               const SizedBox(
-                height: 32,
+                height: 28,
               ),
               InkWell(
                 highlightColor: Colors.transparent,
@@ -297,7 +298,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Jobs') {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => JobView(),));
+                    Navigator.pushReplacementNamed(context, Routes.JOBS);
                   }
                 },
                 child: Padding(
@@ -329,8 +330,94 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
               ),
+
               const SizedBox(
-                height: 32,
+                height: 28,
+              ),
+              InkWell(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onTap: () {
+                  Navigator.pop(context);
+                  if (widget.selectItemName != 'Shift Details') {
+                    Navigator.pushReplacementNamed(context, Routes.SHIFTDETAILS);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Row(
+                    children: <Widget>[
+                      widget.selectItemName == 'Shift Details'
+                          ? selectedData()
+                          : const SizedBox(),
+                      Icon(
+                        FontAwesomeIcons.timeline,
+                        size: 20,
+                        color: widget.selectItemName == 'Shift Details'
+                            ? Theme.of(context).primaryColor
+                            : Theme.of(context).dividerColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        AppLocalizations.of('Shift Details'),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color:
+                          Theme.of(context).textTheme.titleLarge!.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+
+              const SizedBox(
+                height: 28,
+              ),
+              InkWell(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onTap: () {
+                  Navigator.pop(context);
+                  if (widget.selectItemName != 'Earnings') {
+                    Navigator.pushReplacementNamed(context, Routes.EARNINGS);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Row(
+                    children: <Widget>[
+                      widget.selectItemName == 'Earnings'
+                          ? selectedData()
+                          : const SizedBox(),
+                      Icon(
+                        FontAwesomeIcons.moneyCheck,
+                        size: 20,
+                        color: widget.selectItemName == 'Earnings'
+                            ? Theme.of(context).primaryColor
+                            : Theme.of(context).dividerColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        AppLocalizations.of('Earnings'),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color:
+                          Theme.of(context).textTheme.titleLarge!.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(
+                height: 28,
               ),
               InkWell(
                 highlightColor: Colors.transparent,
@@ -338,7 +425,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Account') {
-                    Navigator.pushNamed(context, Routes.ACCOUNT);
+                    Navigator.pushReplacementNamed(context, Routes.ACCOUNT);
                   }
                 },
                 child: Padding(
@@ -371,7 +458,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 ),
               ),
               const SizedBox(
-                height: 32,
+                height: 28,
               ),
               InkWell(
                 highlightColor: Colors.transparent,
@@ -379,7 +466,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Vehicles') {
-                    Navigator.pushNamed(context, Routes.VEHICLES);
+                    Navigator.pushReplacementNamed(context, Routes.VEHICLES);
                   }
                 },
                 child: Padding(
@@ -412,48 +499,49 @@ class _AppDrawerState extends State<AppDrawer> {
                 ),
               ),
               const SizedBox(
-                height: 32,
+                height: 28,
               ),
               InkWell(
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onTap: () {
                   Navigator.pop(context);
-                  if (widget.selectItemName != 'Setting') {
-                    Navigator.pushNamed(context, Routes.SETTING);
+                  if (widget.selectItemName != 'Settings') {
+                    Navigator.pushReplacementNamed(context, Routes.SETTING);
                   }
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 4),
                   child: Row(
                     children: <Widget>[
-                      widget.selectItemName == 'Setting'
+                      widget.selectItemName == 'Settings'
                           ? selectedData()
-                          : SizedBox(),
+                          : const SizedBox(),
                       Icon(
                         FontAwesomeIcons.cog,
                         size: 20,
-                        color: widget.selectItemName == 'Setting'
+                        color: widget.selectItemName == 'Settings'
                             ? Theme.of(context).primaryColor
                             : Theme.of(context).dividerColor,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
                         AppLocalizations.of('Settings'),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).textTheme.titleLarge!.color,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color:
+                          Theme.of(context).textTheme.titleLarge!.color,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
+
               const SizedBox(
-                height: 32,
+                height: 28,
               ),
               InkWell(
                 highlightColor: Colors.transparent,
@@ -462,7 +550,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   SharedPreferences.getInstance().then((prefs) {
                     prefs.clear();
                   });
-                  Navigator.pushNamed(context, Routes.LOGIN);
+                  Navigator.pushReplacementNamed(context, Routes.LOGIN);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 4),
@@ -473,7 +561,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         size: 20,
                         color: Theme.of(context).dividerColor,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(

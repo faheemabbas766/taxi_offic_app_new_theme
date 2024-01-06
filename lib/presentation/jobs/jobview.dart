@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../Api & Routes/routes.dart';
+import '../Language/appLocalizations.dart';
 import '../drawer/drawer.dart';
 import 'completedjobs.dart';
 import 'currentjobs.dart';
@@ -30,6 +31,17 @@ class _JobViewState extends State<JobView> {
   Widget build(BuildContext context) {
     RouteManager.context=context;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor, // Replace with your desired color
+        title: Text(
+          AppLocalizations.of('Jobs'),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontWeight: FontWeight.bold,
+            color:
+            Theme.of(context).textTheme.titleLarge!.color,
+          ),
+        ),
+      ),
       drawer: SizedBox(
         width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
         child: const Drawer(
@@ -38,31 +50,25 @@ class _JobViewState extends State<JobView> {
           ),
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.red, // Replace with your desired color
-        title: const Text(
-          "Jobs View",
-          style: TextStyle(fontSize: 20), // Adjust the font size as needed
-        ),
-      ),
       body: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.work),
+                icon: Icon(Icons.work, color: Theme.of(context).cardColor),
                 label: "Current Job",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.info),
+                icon: Icon(Icons.info, color: Theme.of(context).cardColor),
                 label: "Future Job",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.check),
+                icon: Icon(Icons.check, color: Theme.of(context).cardColor),
                 label: "Complete Job",
               ),
             ],
+            selectedItemColor: Theme.of(context).cardColor,
+            backgroundColor: Theme.of(context).primaryColor,
             currentIndex: _currentIndex,
             onTap: _onTabTapped,
           ),

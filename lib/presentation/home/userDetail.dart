@@ -82,7 +82,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 ),
               ),
             ),
-            Text('#${item.bookid}', style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            Text('#${item.invoiceId}', style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).textTheme.titleLarge!.color,
                   ),
@@ -112,7 +112,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       String title;
                       Color navigationColor;
                       String address =
-                          destination['BD_LOCATION'] ?? "abc";
+                          destination['BD_LOCATION'] ?? "No Location";
 
                       if (isFirstStop) {
                         title = "Pick Up";
@@ -178,8 +178,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                             height: 1,
                             width: MediaQuery.of(context).size.width,
                             color: Theme.of(context).dividerColor,
-                          ):
-                              Container()
+                          ): Container()
                         ],
                       );
                     },
@@ -250,6 +249,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
           // },
           onTap: () {
             setState(() {
+              FlutterRingtonePlayer().stop();
               isLoading = true;
             });
             if (kDebugMode) {
@@ -408,6 +408,7 @@ Widget contact(JobObject item, BuildContext context) {
             ),
             InkWell(
               onTap: () {
+                FlutterRingtonePlayer().stop();
                 API.showLoading("", context);
                 API.respondToBooking(item.bookid, 7, context).then((value) async {
                   Navigator.of(context, rootNavigator: true).pop();

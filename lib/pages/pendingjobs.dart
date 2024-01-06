@@ -172,7 +172,7 @@ class _PendingJobsState extends State<PendingJobs> {
                                     Color stopColor;
                                     Color navigationColor;
                                     String address =
-                                        destination['BD_LOCATION'] ?? "abc";
+                                        destination['BD_LOCATION'] ?? "No Location";
 
                                     if (isFirstStop) {
                                       title = "Pick Up";

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_app/bottom/bottomnavigation.dart';
 import 'package:taxi_app/pages/add_booking.dart';
 import 'package:taxi_app/pages/home.dart';
 import 'package:taxi_app/pages/tripdetails.dart';
-import 'package:taxi_app/presentation/notification/notificationScree.dart';
 import 'package:taxi_app/presentation/vehicalManagement/vehicalmanagementScreen.dart';
 import '../pages/live_status.dart';
 import '../pages/pobmap.dart';
 import '../pages/startshift.dart';
 import '../presentation/auth/loginScreen.dart';
-import '../presentation/history/historyScreen.dart';
+import '../presentation/history/earningScreen.dart';
 import '../presentation/home/homeScreen.dart';
 import '../presentation/introduction/LocationScreen.dart';
 import '../presentation/introduction/introductionScreen.dart';
-import '../presentation/inviteFriend/inviteFriendScreen.dart';
+import '../presentation/inviteFriend/shiftDetails.dart';
 import '../presentation/jobs/jobview.dart';
 import '../presentation/setting/myProfile.dart';
 import '../presentation/setting/settingScreen.dart';
@@ -43,8 +41,6 @@ class RouteManager {
         return MaterialPageRoute(builder: (context) => LoginScreen());
       case rootpage:
         return MaterialPageRoute(builder: (context) => SplashScreen());
-      case bottomPage:
-        return MaterialPageRoute(builder: (context) => const BottomBar());
       case homepage:
         return MaterialPageRoute(builder: (context) => const Home());
       case jobviewpage:
@@ -74,9 +70,9 @@ var routes = <String, WidgetBuilder>{
   Routes.INTRODUCTION: (BuildContext context) => IntroductionScreen(),
   Routes.ENABLELOCATION: (BuildContext context) => EnableLocation(),
   Routes.HOME: (BuildContext context) => HomeScreen(),
-  Routes.HISTORY: (BuildContext context) => HistoryScreen(),
+  Routes.EARNINGS: (BuildContext context) => EarningScreen(),
   Routes.VEHICLES: (BuildContext context) => VehicleManagement(),
-  Routes.INVITE: (BuildContext context) => InviteFriendScreen(),
+  Routes.SHIFTDETAILS: (BuildContext context) => ShiftDetailsScreen(),
   Routes.SETTING: (BuildContext context) => SettingScreen(),
   Routes.ACCOUNT: (BuildContext context) => MyProfile(),
   Routes.LOGIN: (BuildContext context) => LoginScreen(),
@@ -88,9 +84,9 @@ class Routes {
   static const String ENABLELOCATION = "/introduction/LocationScreen";
   static const String LOGIN = "/auth/loginScreen";
   static const String HOME = "/home/homeScreen";
-  static const String HISTORY = "/history/historyScreen";
+  static const String EARNINGS = "/history/historyScreen";
   static const String VEHICLES = "/notification/notificationScree";
-  static const String INVITE = "/inviteFriend/inviteFriendScreen";
+  static const String SHIFTDETAILS = "/inviteFriend/inviteFriendScreen";
   static const String SETTING = "/setting/settingScreen";
   static const String ACCOUNT = "/setting/myProfile";
   static const String JOBS = "/jobs/jobview.dart";

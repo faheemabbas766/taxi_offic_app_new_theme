@@ -186,7 +186,7 @@ class _ShowDialogScreenState extends State<ShowDialogScreen> {
                                         Color stopColor;
                                         Color navigationColor;
                                         String address =
-                                            destination['BD_LOCATION'] ?? "abc";
+                                            destination['BD_LOCATION'] ?? " ";
 
                                         if (isFirstStop) {
                                           title = "Pick Up";

@@ -8,6 +8,7 @@ import '../../providers/homepro.dart';
 import '../../providers/startshiftpro.dart';
 import '../Language/appLocalizations.dart';
 import '../constance/constance.dart';
+import '../drawer/drawer.dart';
 
 class VehicleManagement extends StatefulWidget {
   const VehicleManagement({super.key});
@@ -33,32 +34,20 @@ class _VehicleManagementState extends State<VehicleManagement> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: SizedBox(
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: Theme.of(context).textTheme.titleLarge!.color,
-                ),
-              ),
-            ),
-            Text(
-              AppLocalizations.of('Vehicle Management'),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleLarge!.color,
-                  ),
-            ),
-            const SizedBox(),
-          ],
+        title: Center(child: Text(
+          AppLocalizations.of('Vehicle Management'),
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.titleLarge!.color,
+          ),
+        ),),
+      ),
+      drawer: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.75 < 400 ? MediaQuery.of(context).size.width * 0.75 : 350,
+        child: const Drawer(
+          child: AppDrawer(
+            selectItemName: 'Vehicles',
+          ),
         ),
       ),
       body: ListView.builder(

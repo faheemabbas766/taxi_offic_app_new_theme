@@ -100,6 +100,7 @@ class _RiderListState extends State<RiderList> {
                         MaterialPageRoute(
                           builder: (context) => UserDetailScreen(
                             item: JobObject(
+                                '1111',
                                 999,
                                 'faheem',
                                 '34343434',
@@ -350,7 +351,7 @@ class _RiderListState extends State<RiderList> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => UserDetailScreen(item: JobObject(
-                              999,
+                              '999',1111,
                               'faheem',
                               '34343434',
                               'islamabad',
@@ -601,6 +602,7 @@ class _RiderListState extends State<RiderList> {
                         MaterialPageRoute(
                           builder: (context) => UserDetailScreen(
                             item: JobObject(
+                                '2',
                                 999,
                                 'faheem',
                                 '34343434',
