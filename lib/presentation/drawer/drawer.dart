@@ -192,7 +192,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       ),
                       Column(
                         children: <Widget>[
-                          Icon(
+                          const Icon(
                             FontAwesomeIcons.rocket,
                             color: ConstanceData.secoundryFontColor,
                             size: 20,
@@ -259,7 +259,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Home') {
-                    Navigator.pushReplacementNamed(context, Routes.HOME);
+                    Navigator.pushNamed(context, Routes.HOME);
                   }
                 },
                 child: Row(
@@ -297,8 +297,52 @@ class _AppDrawerState extends State<AppDrawer> {
                 splashColor: Colors.transparent,
                 onTap: () {
                   Navigator.pop(context);
+                  if (widget.selectItemName != 'Add Job') {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.ADDJOB);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Row(
+                    children: <Widget>[
+                      widget.selectItemName == 'Add Job'
+                          ? selectedData()
+                          : const SizedBox(),
+                      Icon(
+                        FontAwesomeIcons.add,
+                        size: 20,
+                        color: widget.selectItemName == 'Add Job'
+                            ? Theme.of(context).primaryColor
+                            : Theme.of(context).dividerColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        AppLocalizations.of('Add Job'),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color:
+                          Theme.of(context).textTheme.titleLarge!.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(
+                height: 28,
+              ),
+              InkWell(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onTap: () {
+                  Navigator.pop(context);
                   if (widget.selectItemName != 'Jobs') {
-                    Navigator.pushReplacementNamed(context, Routes.JOBS);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.JOBS);
                   }
                 },
                 child: Padding(
@@ -321,10 +365,10 @@ class _AppDrawerState extends State<AppDrawer> {
                       Text(
                         AppLocalizations.of('Jobs'),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).textTheme.titleLarge!.color,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color:
+                          Theme.of(context).textTheme.titleLarge!.color,
+                        ),
                       ),
                     ],
                   ),
@@ -340,7 +384,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Shift Details') {
-                    Navigator.pushReplacementNamed(context, Routes.SHIFTDETAILS);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.SHIFTDETAILS);
                   }
                 },
                 child: Padding(
@@ -383,7 +428,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Earnings') {
-                    Navigator.pushReplacementNamed(context, Routes.EARNINGS);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.EARNINGS);
                   }
                 },
                 child: Padding(
@@ -425,7 +471,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Account') {
-                    Navigator.pushReplacementNamed(context, Routes.ACCOUNT);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.ACCOUNT);
                   }
                 },
                 child: Padding(
@@ -466,7 +513,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Vehicles') {
-                    Navigator.pushReplacementNamed(context, Routes.VEHICLES);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.VEHICLES);
                   }
                 },
                 child: Padding(
@@ -507,7 +555,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   if (widget.selectItemName != 'Settings') {
-                    Navigator.pushReplacementNamed(context, Routes.SETTING);
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushNamed(context, Routes.SETTING);
                   }
                 },
                 child: Padding(
@@ -550,7 +599,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   SharedPreferences.getInstance().then((prefs) {
                     prefs.clear();
                   });
-                  Navigator.pushReplacementNamed(context, Routes.LOGIN);
+                  Navigator.pushNamedAndRemoveUntil(context, Routes.LOGIN,(route) => false);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 4),

@@ -171,52 +171,79 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           body: isLoading? const Center(child: CircularProgressIndicator(),)
-              :Stack(
-            children: <Widget>[
-              // GoogleMap(
-              //   mapType: MapType.normal,
-              //   initialCameraPosition: CameraPosition(
-              //     target: LatLng(lat, long),
-              //     zoom: 10,
-              //   ),
-              //   onMapCreated: (GoogleMapController controller) {
-              //     mapController = controller;
-              //     setLDMapStyle();
-              //   },
-              //   markers: Set<Marker>.of(getMarkerList(context).values),
-              //   polylines: Set<Polyline>.of(getPolyLine(context).values),
-              // ),
-              !isOffline
-                  ? Column(
-                      children: <Widget>[
-                        offLineMode(),
-                        const Expanded(
-                          child: SizedBox(),
-                        ),
-                        myLocation(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        offLineModeDetail(),
-                        Container(
-                          height: MediaQuery.of(context).padding.bottom,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                        )
-                      ],
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        onlineMode(),
-                        Expanded(
-                          child: Image.asset(
-                              'assets/abc.gif',fit: BoxFit.cover),
-                        ),
-                        offLineModeDetail(),
-                      ],
-                    ),
-            ],
-          ),
+              :WillPopScope(
+            onWillPop: () async {
+              return await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Exit App?'),
+                    content: Text('Do you want to exit the app?'),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false); // User doesn't want to exit
+                        },
+                        child: Text('No'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true); // User wants to exit
+                        },
+                        child: Text('Yes'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+                child: Stack(
+                            children: <Widget>[
+                // GoogleMap(
+                //   mapType: MapType.normal,
+                //   initialCameraPosition: CameraPosition(
+                //     target: LatLng(lat, long),
+                //     zoom: 10,
+                //   ),
+                //   onMapCreated: (GoogleMapController controller) {
+                //     mapController = controller;
+                //     setLDMapStyle();
+                //   },
+                //   markers: Set<Marker>.of(getMarkerList(context).values),
+                //   polylines: Set<Polyline>.of(getPolyLine(context).values),
+                // ),
+                !isOffline
+                    ? Column(
+                        children: <Widget>[
+                          offLineMode(),
+                          const Expanded(
+                            child: SizedBox(),
+                          ),
+                          myLocation(),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          offLineModeDetail(),
+                          Container(
+                            height: MediaQuery.of(context).padding.bottom,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                          )
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          onlineMode(),
+                          Expanded(
+                            child: Image.asset(
+                                'assets/abc.gif',fit: BoxFit.cover),
+                          ),
+                          offLineModeDetail(),
+                        ],
+                      ),
+                            ],
+                          ),
+              ),
         ),
       ),
     );

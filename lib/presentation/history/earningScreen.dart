@@ -1,16 +1,18 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Api & Routes/routes.dart';
+import '../../Entities/jobsobject.dart';
 import '../../providers/homepro.dart';
 import '../constance/constance.dart';
 import '../drawer/drawer.dart';
 import '../Language/appLocalizations.dart';
 import 'package:http/http.dart'as http;
+import '../jobs/completeJobDetailsScreen.dart';
+import '../jobs/completedjobs.dart';
 class EarningScreen extends StatefulWidget {
   const EarningScreen({super.key});
 
@@ -20,37 +22,8 @@ class EarningScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<EarningScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  DateTime? fromDate;
-  DateTime? toDate;
-  Future<void> pickFromDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: fromDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != fromDate) {
-      setState(() {
-        fromDate = picked;
-      });
-    }
-  }
-
-  Future<void> pickToDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: toDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != toDate) {
-      setState(() {
-        toDate = picked;
-      });
-    }
-  }
-
-  List<Map<String, dynamic>> earningDetails = [];
+  dynamic earningDetails;
+  late List<bool> isSelected;
   bool isLoading = true;
   Future<void> fetchData() async {
     try {
@@ -63,12 +36,10 @@ class _HistoryScreenState extends State<EarningScreen> {
         'Accept': 'application/json',
         'token': Provider.of<HomePro>(context, listen: false).token,
       });
-      fromDate ??= DateTime.now();
-      toDate ??= DateTime.now();
       request.fields.addAll({
         'id': Provider.of<HomePro>(context, listen: false).userid.toString(),
-        'todate': DateFormat('yyyy-MM-dd').format(toDate!),
-        'frmdate':DateFormat('yyyy-MM-dd').format(fromDate!)
+        'todate': DateFormat('yyyy-MM-dd').format(toDate),
+        'frmdate':DateFormat('yyyy-MM-dd').format(fromDate)
       });
       http.StreamedResponse response =
       await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
@@ -94,8 +65,47 @@ class _HistoryScreenState extends State<EarningScreen> {
 
           });
         }
-        earningDetails =
-        List<Map<String, dynamic>>.from(jsonResponse['shift_info']);
+        earningDetails =jsonResponse['Userdata'];
+        completedJobs = [];
+        for (var i in jsonResponse['Userdata']["booking"]) {
+          completedJobs.add(JobObject(
+              i['BM_JOB_NO'],
+              int.parse(i["BM_SN"]),
+              i["CUS_NAME"]??"No Data",
+              i["CUS_PHONE"]??"No Data",
+              i["BM_PICKUP"]??"No Data",
+              i["BM_DROP"]??"No Data",
+              int.parse(i["BM_PASSENGER"]),
+              i["BM_LAGGAGE"] == "1"
+                  ? "Large"
+                  : i["BM_LAGGAGE"] == "2"
+                  ? "Small"
+                  : "Hand Carry",
+              i["BM_PAY_METHOD"] == "1"
+                  ? "Cash"
+                  : i["BM_PAY_METHOD"] == "2"
+                  ? "Card"
+                  : "Account",
+              i["total_amount"],
+              DateTime(
+                int.parse(i["BM_DATE"].split(' ')[0].split('-')[0]),
+                int.parse(i["BM_DATE"].split(' ')[0].split('-')[1]),
+                int.parse(i["BM_DATE"].split(' ')[0].split('-')[2]),
+                int.parse(i["BM_DATE"].split(' ')[1].split(':')[0]),
+                int.parse(i["BM_DATE"].split(' ')[1].split(':')[1]),
+                int.parse(i["BM_DATE"].split(' ')[1].split(':')[2]),
+              ),
+              i["BM_PICKUP_NOTE"] ?? "Default Pickup Note",
+              i["BM_DROP_NOTE"] ?? "Default Drop Note",
+              double.parse(i["BM_PLAT"]?? '0'),
+              double.parse(i["BM_PLANG"]?? '0'),
+              double.parse(i["BM_DLAT"]?? '0'),
+              double.parse(i["BM_DLANG"]?? '0'),
+              i["BM_DISTANCE"].toString(),
+              i["BM_DISTANCE_TIME"].toString(),
+              i["FLIGHT_NUMBER"].toString()
+          ),);
+        }
         isLoading = false;
         setState(() {
         });
@@ -104,13 +114,14 @@ class _HistoryScreenState extends State<EarningScreen> {
       }
     } catch (e) {
       print('Error fetching data: $e');
-      // Handle error, show a message or retry mechanism if needed
     }
   }
-
+  DateTime fromDate = DateTime.now();
+  DateTime toDate = DateTime.now();
   @override
   void initState() {
     super.initState();
+    isSelected = [false, false, false];
     fetchData();
   }
 
@@ -156,9 +167,9 @@ class _HistoryScreenState extends State<EarningScreen> {
               child: Text(
                 AppLocalizations.of('Earnings'),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleLarge!.color,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge!.color,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -175,641 +186,384 @@ class _HistoryScreenState extends State<EarningScreen> {
             height: 1.5,
             color: Theme.of(context).dividerColor,
           ),
-          isLoading? const Center(child:CircularProgressIndicator())
-              :jobsAndEarns(),
-          const SizedBox(
-            height: 8,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () async {
+                    await pickFromDate();
+                    setState(() {
+
+                    });
+                  },
+                  child: Text(DateFormat('dd-MM-yyyy').format(fromDate))),
+              const SizedBox(width: 10,),
+              ElevatedButton(
+                  onPressed: () async {
+                    await pickToDate();
+                    fetchData();
+                  },
+                  child: Text(DateFormat('dd-MM-yyyy').format(toDate))),
+            ],
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8, left: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadiusDirectional.circular(16),
-                        color: Theme.of(context).cardColor,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Row(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      ConstanceData.userImage,
-                                      height: 50,
-                                      width: 50,
+          myButtons(),
+          earningDetails.isEmpty
+              ? const Center(child: Text('No Shift Found!!!'))
+              :jobsAndEarns(),
+          completedJobs.isEmpty? isLoading? const Center(child: CircularProgressIndicator())
+              : Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "No Jobs Taken Yet",
+                  style: TextStyle(
+                    fontSize: RouteManager.width / 20,
+                    color: const Color.fromARGB(255, 54, 54, 54),
+                  ),
+                ),
+              ],
+            ),
+          )
+              : Expanded(
+            child: Column(
+              children:[
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: completedJobs.length,
+                    itemBuilder: (context, index) {
+                      var item = completedJobs[index];
+                      return Column(
+                        children:[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 6, left: 6),
+                            child: InkWell(
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              onTap: () {
+                                // Navigator.push(context, MaterialPageRoute(builder: (context) => UserDetailScreen(userId: 1,),),);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadiusDirectional.circular(16),
+                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(14),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  AppLocalizations.of(item.name),
+                                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Theme.of(context).textTheme.titleLarge!.color,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 4,
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      height: 24,
+                                                      width: 100,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: const BorderRadius.all(
+                                                          Radius.circular(15),
+                                                        ),
+                                                        color: Theme.of(context).primaryColor,
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          AppLocalizations.of(item.phn),
+                                                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: ConstanceData.secoundryFontColor,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 4,
+                                                    ),
+                                                    Container(
+                                                      height: 24,
+                                                      width: 74,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: const BorderRadius.all(
+                                                          Radius.circular(15),
+                                                        ),
+                                                        color: Theme.of(context).primaryColor,
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          AppLocalizations.of(item.paymentmethod),
+                                                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: ConstanceData.secoundryFontColor,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                            const Expanded(
+                                              child: SizedBox(),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: <Widget>[
+                                                Text(
+                                                  '£${item.total_amount}',
+                                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Theme.of(context).textTheme.titleLarge!.color,
+                                                  ),
+                                                ),
+                                                Text('${item.distance}km',
+                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                                    color: Theme.of(context).disabledColor,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        AppLocalizations.of('Esther Berry'),
-                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
-                                      ),
-                                      SizedBox(
-                                        height: 4,
-                                      ),
-                                      Row(
+                                    Container(
+                                      height: 1,
+                                      width: MediaQuery.of(context).size.width,
+                                      color: Theme.of(context).dividerColor,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+                                      child: Row(
                                         children: <Widget>[
-                                          Container(
-                                            height: 24,
-                                            width: 74,
-                                            child: Center(
-                                              child: Text(
-                                                AppLocalizations.of('ApplePay'),
-                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                AppLocalizations.of('PICKUP'),
+                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                                  color: Theme.of(context).disabledColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(15),
+                                              const SizedBox(
+                                                height: 4,
                                               ),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
+                                              Text(
+                                                AppLocalizations.of(item.pickupadress),
+                                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context).textTheme.titleLarge!.color,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Container(
-                                            height: 24,
-                                            width: 74,
-                                            child: Center(
-                                              child: Text(
-                                                AppLocalizations.of('Discount'),
-                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(15),
-                                              ),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          )
                                         ],
-                                      )
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: SizedBox(),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        '\$25.00',
-                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
                                       ),
-                                      Text(
-                                        '2.2 km',
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              color: Theme.of(context).disabledColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 14, left: 14),
+                                      child: Container(
+                                        height: 1,
+                                        width: MediaQuery.of(context).size.width,
+                                        color: Theme.of(context).dividerColor,
                                       ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                AppLocalizations.of('DROP OFF'),
+                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                                  color: Theme.of(context).disabledColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 4,
+                                              ),
+                                              Text(
+                                                AppLocalizations.of(item.dropaddress),
+                                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context).textTheme.titleLarge!.color,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      width: MediaQuery.of(context).size.width,
+                                      color: Theme.of(context).dividerColor,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 14, left: 14, top: 16),
+                                      child: InkWell(
+                                        onTap:(){
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => CompleteJobsDetailScreen(item:item)));
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              AppLocalizations.of('Show Details'),
+                                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: ConstanceData.secoundryFontColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      AppLocalizations.of('PICKUP'),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of('79 Swift Village'),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14),
-                            child: Container(
-                              height: 1,
-                              width: MediaQuery.of(context).size.width,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      AppLocalizations.of('DROP OFF'),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of('115 William St, Chicago, US'),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
+                          const SizedBox(
+                            height: 16,
                           ),
                         ],
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 6, left: 6),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadiusDirectional.circular(16),
-                        color: Theme.of(context).cardColor,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Row(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      ConstanceData.user1,
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        AppLocalizations.of('Callie Greer'),
-                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
-                                      ),
-                                      SizedBox(
-                                        height: 4,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 24,
-                                            width: 74,
-                                            child: Center(
-                                              child: Text(
-                                                AppLocalizations.of('ApplePay'),
-                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(15),
-                                              ),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Container(
-                                            height: 24,
-                                            width: 74,
-                                            child: Center(
-                                              child: Text(
-                                                AppLocalizations.of('Discount'),
-                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(15),
-                                              ),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: SizedBox(),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        '\$20.00',
-                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
-                                      ),
-                                      Text(
-                                        '1.5 km',
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              color: Theme.of(context).disabledColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      AppLocalizations.of('PICKUP'),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of('62 Kobe Trafficway'),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14),
-                            child: Container(
-                              height: 1,
-                              width: MediaQuery.of(context).size.width,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      AppLocalizations.of('DROP OFF'),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of('280, AB Sunny willa'),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 6, left: 6),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadiusDirectional.circular(16),
-                        color: Theme.of(context).cardColor,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadiusDirectional.only(topEnd: Radius.circular(16), topStart: Radius.circular(16)),
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Row(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      ConstanceData.user2,
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        AppLocalizations.of('Esther Berry'),
-                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
-                                      ),
-                                      SizedBox(
-                                        height: 4,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 24,
-                                            width: 74,
-                                            child: Center(
-                                              child: Text(
-                                                AppLocalizations.of('ApplePay'),
-                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(15),
-                                              ),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Container(
-                                            height: 24,
-                                            width: 74,
-                                            child: Center(
-                                              child: Text(
-                                                AppLocalizations.of('Discount'),
-                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: ConstanceData.secoundryFontColor,
-                                                    ),
-                                              ),
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(15),
-                                              ),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: SizedBox(),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        '\$10.00',
-                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleLarge!.color,
-                                            ),
-                                      ),
-                                      Text(
-                                        '0.5 km',
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              color: Theme.of(context).disabledColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: 1,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).dividerColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      AppLocalizations.of('PICKUP'),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of('25 Lcie Park Suite 456'),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14),
-                            child: Container(
-                              height: 1,
-                              width: MediaQuery.of(context).size.width,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 14, left: 14, bottom: 8, top: 8),
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      AppLocalizations.of('DROP OFF'),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                            color: Theme.of(context).disabledColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of('187/ William St, London, UK'),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.titleLarge!.color,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).padding.bottom + 16,
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).padding.bottom + 16,
+                )
+              ],
             ),
           )
         ],
       ),
     );
   }
+  Widget myButtons() {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ToggleButtons(
+                onPressed: (int index) {
+                  setState(() {
+                    for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
+                      isSelected[buttonIndex] = (buttonIndex == index);
+                    }
 
+                    if (index == 0) {
+                      fromDate = DateTime.now();
+                      toDate = DateTime.now();
+                    } else if (index == 1) {
+                      fromDate = DateTime.now().subtract(const Duration(days: 7));
+                      toDate = DateTime.now();
+                    } else if (index == 2) {
+                      fromDate = DateTime.now().subtract(const Duration(days: 30));
+                      toDate = DateTime.now();
+                    }else{
+
+                    }
+                    fetchData();
+                  });
+                },
+                isSelected: isSelected,
+                borderRadius: BorderRadius.circular(8.0),
+                fillColor: Theme.of(context).primaryColor,
+                selectedColor: ConstanceData.secoundryFontColor,
+                color: Theme.of(context).primaryColor,
+                selectedBorderColor: Theme.of(context).primaryColor,
+                borderColor: Colors.grey,
+                children: const <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Today'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('This Week'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('This Month'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> pickFromDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != fromDate) {
+      setState(() {
+        fromDate = picked;
+      });
+    }
+  }
+
+  Future<void> pickToDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != toDate) {
+      setState(() {
+        toDate = picked;
+      });
+      fetchData(); // Add this line to fetch data when toDate is changed
+    }
+  }
   Widget jobsAndEarns() {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: pickFromDate,
-                    child: Text(fromDate == null ? 'From Date' : 'From: ${DateFormat('yyyy-MM-dd').format(fromDate!)}'),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: pickToDate,
-                    child: Text(toDate == null ? 'To Date' : 'To: ${DateFormat('yyyy-MM-dd').format(toDate!)}'),
-                  ),
-                ),
-              ),
-            ],
-          ),
           Row(
             children: <Widget>[
               Expanded(
@@ -822,46 +576,66 @@ class _HistoryScreenState extends State<EarningScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           FontAwesomeIcons.carAlt,
-                          size: 40,
+                          size: 20,
                           color: ConstanceData.secoundryFontColor,
                         ),
                         const SizedBox(
-                          width: 16,
+                          width: 10,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              AppLocalizations.of('Total Job'),
-                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: ConstanceData.secoundryFontColor,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  AppLocalizations.of('Today Jobs: '),
+                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: ConstanceData.secoundryFontColor,
+                                  ),
+                                ),
+                                Text('${earningDetails['totalTodayBooking']}',
+                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: ConstanceData.secoundryFontColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              earningDetails[0]['totalTodayBooking'],
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: ConstanceData.secoundryFontColor,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  AppLocalizations.of('Total Jobs:   '),
+                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: ConstanceData.secoundryFontColor,
+                                  ),
+                                ),
+                                Text('${earningDetails['totalAccountjob']}',
+                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: ConstanceData.secoundryFontColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 8,
               ),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
                       color: ConstanceData.secoundryFontColor,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(5),
                       border: Border.all(
                         color: Theme.of(context).primaryColor,
                       )),
@@ -871,25 +645,18 @@ class _HistoryScreenState extends State<EarningScreen> {
                       children: <Widget>[
                         Icon(
                           FontAwesomeIcons.dollarSign,
-                          size: 38,
+                          size: 30,
                           color: Theme.of(context).primaryColor,
                         ),
-                        SizedBox(
-                          width: 16,
+                        const SizedBox(
+                          width: 5,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              AppLocalizations.of('Earned'),
-                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            Text(
-                              '\$325',
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              'Cash: ${earningDetails['totalCashjob']} £\nAccount: ${earningDetails['totalAccountjob']} £',
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor,
                               ),
@@ -907,64 +674,5 @@ class _HistoryScreenState extends State<EarningScreen> {
       ),
     );
   }
-
-  Widget calendarList(DateTime fromDate, DateTime toDate) {
-    final days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    List<Widget> dateWidgets = [];
-    for (DateTime date = fromDate; date.isBefore(toDate); date = date.add(Duration(days: 1))) {
-      String dayLabel = days[date.weekday - 1]; // Get the day label (e.g., Mon, Tue)
-      String dayOfMonth = '${date.day}'; // Get the day of the month as a string
-
-      dateWidgets.add(
-        SizedBox(
-          width: 8,
-        ),
-      );
-      dateWidgets.add(
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Theme.of(context).colorScheme.background,
-          ),
-          width: 50,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(dayLabel),
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).disabledColor,
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(),
-                ),
-                Text(
-                  dayOfMonth,
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).disabledColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      color: Theme.of(context).scaffoldBackgroundColor,
-      height: 80,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: dateWidgets,
-      ),
-    );
-  }
-
 }
+

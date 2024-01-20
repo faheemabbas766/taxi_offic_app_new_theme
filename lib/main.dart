@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taxi_app/presentation/constance/constance.dart';
 import 'dart:convert';
 import 'genericnotifications.dart';
@@ -17,13 +18,11 @@ import 'package:taxi_app/providers/bottomnavpro.dart';
 import 'package:taxi_app/providers/homepro.dart';
 import 'package:taxi_app/providers/pendingjobspro.dart';
 import 'package:taxi_app/providers/startshiftpro.dart';
-import 'package:taxi_app/providers/themepro.dart';
 import 'Api & Routes/api.dart';
 import 'Api & Routes/routes.dart';
 import 'firebase_options.dart';
 import 'providers/completedjobspro.dart';
 import 'providers/currentjobspro.dart';
-import 'providers/pobmappro.dart';
 import 'providers/tripdetailspro.dart';
 String token = '';
 void showFutureJobDialog(BuildContext context, int bid) {
@@ -142,6 +141,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   API.devid = await firebaseMessaging.getToken();
+  
   if (kDebugMode) {
     print(
       "SENTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
@@ -314,6 +314,10 @@ void main() async {
     }
   });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  print("Showing Theme:::::::::::::::::::::::::::::::::::::::${pref.getInt('themeColor')}");
+  constance.colorsIndex = pref.getInt('themeColor') ?? 0;
+  constance.isLightTheme = pref.getBool('isLightTheme')?? true;
   runApp(
     MultiProvider(
       providers: [
@@ -325,16 +329,12 @@ void main() async {
             create: (_) => BottomNavigationPro()),
         ChangeNotifierProvider<CurrentJobsPro>(
             create: (_) => CurrentJobsPro()),
-        ChangeNotifierProvider<PendingJobsPro>(lazy: false,
+        ChangeNotifierProvider<PendingJobsPro>(
             create: (_) => PendingJobsPro()),
         ChangeNotifierProvider<CompletedJobsPro>(
             create: (_) => CompletedJobsPro()),
         ChangeNotifierProvider<TripDetailsPro>(
             create: (_) => TripDetailsPro()),
-        ChangeNotifierProvider<PobMapPro>(
-            create: (_) => PobMapPro()),
-        ChangeNotifierProvider<ThemeModeProvider>(
-          create: (_) => ThemeModeProvider(),),
       ],
       child: const MyApp(),
     ),
@@ -344,9 +344,24 @@ void main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  static setCustomTheme(BuildContext context, int index) {
+  static setCustomTheme(BuildContext context, int index) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    if(index<6){
+      pref.setInt('themeColor', index);
+      print("Theme Saved:::::::::::::::::::::::::::::::::::::::${pref.getInt('themeColor')}");
+
+    }
+    if(index==7) {
+      pref.setBool('isLightTheme', false);
+      constance.isLightTheme = false;
+    }
+    if(index==6){
+      pref.setBool('isLightTheme', true);
+      constance.isLightTheme = true;
+    }
+    constance.colorsIndex = index;
     final _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-    state!.setCustomeTheme(index);
+    state!.setCustomTheme(index);
   }
 
   static setCustomLanguage(BuildContext context, String languageCode) {
@@ -359,7 +374,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  setCustomeTheme(int index) {
+  setCustomTheme(int index){
     if (index == 6) {
       setState(() {
         AppTheme.isLightTheme = true;
@@ -379,7 +394,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   String locale = "en";
-
   setLanguage(String languageCode) {
     setState(() {
       locale = languageCode;

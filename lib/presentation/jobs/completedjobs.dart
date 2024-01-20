@@ -39,7 +39,7 @@ class _CompletedJobsState extends State<CompletedJobs> {
     RouteManager.context=context;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body:  isLoading? completedJobs.isEmpty? const Center(child: CircularProgressIndicator())
+      body: completedJobs.isEmpty? isLoading? const Center(child: CircularProgressIndicator())
           : Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -215,7 +215,7 @@ class _CompletedJobsState extends State<CompletedJobs> {
                                         ),
                                         Text(
                                           AppLocalizations.of(item.pickupadress),
-                                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                          style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: Theme.of(context).textTheme.titleLarge!.color,
                                           ),
@@ -252,7 +252,7 @@ class _CompletedJobsState extends State<CompletedJobs> {
                                         ),
                                         Text(
                                           AppLocalizations.of(item.dropaddress),
-                                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                          style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: Theme.of(context).textTheme.titleLarge!.color,
                                           ),

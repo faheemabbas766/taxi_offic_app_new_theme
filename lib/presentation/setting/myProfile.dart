@@ -10,9 +10,7 @@ import 'package:taxi_app/presentation/splashScreen.dart';
 import '../../Api & Routes/routes.dart';
 import '../../providers/homepro.dart';
 import '../Language/appLocalizations.dart';
-import '../constance/constance.dart';
 import 'package:fluttertoast/fluttertoast.dart'as ft;
-
 import '../drawer/drawer.dart';
 
 class MyProfile extends StatefulWidget {
@@ -41,6 +39,80 @@ class _MyProfileState extends State<MyProfile> {
   bool isEditable = false;
   final _formKey = GlobalKey<FormState>();
   String? selectedVehicle;
+  Widget _buildFormField({
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    int maxLines = 1,
+  }) {
+    return Column(
+      children: [
+        Text(
+          AppLocalizations.of(label),
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).disabledColor,
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Visibility(
+          visible: isEditable,
+          child: SizedBox(
+            height: 45,
+            child: TextFormField(
+              enabled: isEditable,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'This Field is Required!';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                labelStyle: TextStyle(
+                  color: isEditable ? null : Colors.green,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: isEditable ? Colors.blue : Colors.green,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: isEditable ? Colors.blue : Colors.green,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              controller: controller,
+              maxLines: maxLines,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: !isEditable,
+          child: Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Theme.of(context).primaryColorDark, // Adjust the background color as needed
+            ),
+            child: Text(
+              hintText,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+      ],
+    );
+  }
 
   Future<String?> _imagePicker() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -246,12 +318,17 @@ class _MyProfileState extends State<MyProfile> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CircleAvatar(
-                      radius: MediaQuery.of(context).size.width <= 320 ? 36 : 46,
-                      child: ClipRRect(
-                        borderRadius: MediaQuery.of(context).size.width <= 320 ? BorderRadius.circular(40) : BorderRadius.circular(60),
-                        child: Image.asset(
-                          ConstanceData.user3,
+                    InkWell(
+                      onTap: (){
+
+                      },
+                      child: CircleAvatar(
+                        radius: MediaQuery.of(context).size.width <= 320 ? 36 : 46,
+                        child: ClipRRect(
+                          borderRadius: MediaQuery.of(context).size.width <= 320 ? BorderRadius.circular(40) : BorderRadius.circular(60),
+                          child: Image.network(
+                            data['profile']['EMP_PROFILE_IMAGE'],
+                          ),
                         ),
                       ),
                     ),
@@ -262,7 +339,7 @@ class _MyProfileState extends State<MyProfile> {
                       ),
                     ),
                     Text(
-                      data['profile']['emp_id'],
+                      'ID: '+data['profile']['emp_id'],
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).disabledColor,
@@ -288,216 +365,81 @@ class _MyProfileState extends State<MyProfile> {
             ),
           ),
           Expanded(
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 14, left: 14, top: 10),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('PHONE'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Phone',
-                                  ),
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 14, left: 14, top: 10),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: ListView(
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                _buildFormField(
+                                  label: 'PHONE',
+                                  hintText: phoneController.text,
                                   controller: phoneController,
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-            
-            
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('EMAIL'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Email',
-                                  ),
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'EMAIL',
+                                  hintText: emailController.text,
                                   controller: emailController,
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-            
-            
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('Home Phone'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Home Phone',
-                                  ),
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'Home Phone',
+                                  hintText: hPhoneController.text,
                                   controller: hPhoneController,
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('NI NUMBER'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Ni Number',
-                                  ),
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'NI NUMBER',
+                                  hintText: niNumberController.text,
                                   controller: niNumberController,
                                 ),
-                              ),
-            
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('LICENCE NUMBER'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Licence Number',
-                                  ),
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'LICENCE NUMBER',
+                                  hintText: licenceNumberController.text,
                                   controller: licenceNumberController,
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'PHV NUMBER',
+                                  hintText: phvNumberController.text,
+                                  controller: phvNumberController,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'PASSPORT NUMBER',
+                                  hintText: passportNumberController.text,
+                                  controller: passportNumberController,
+                                ),
+                                const SizedBox(height: 12),
+                                _buildFormField(
+                                  label: 'BIOMETRIC NUMBER',
+                                  hintText: biometricNumberController.text,
+                                  controller: biometricNumberController,
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
                                   children: [
                                     SizedBox(
                                       height: 45,
                                       width: 150,
-                                      child: TextFormField(
-                                  enabled: isEditable,
+                                      child: isEditable
+                                          ? TextFormField(
                                         keyboardType: TextInputType.datetime,
                                         onTap: () async {
                                           DateTime? dt = await showDatePicker(
                                               context: context,
                                               firstDate: DateTime(2000),
                                               lastDate: DateTime(2100));
-                                          if(dt!=null){
-                                            licenceExpiryController.text = DateFormat('dd-MM-yyyy').format(dt);
+                                          if (dt != null) {
+                                            licenceExpiryController.text =
+                                                DateFormat('dd-MM-yyyy').format(dt);
                                           }
                                         },
                                         validator: (value) {
@@ -513,84 +455,41 @@ class _MyProfileState extends State<MyProfile> {
                                           labelText: 'Licence Expiry',
                                         ),
                                         controller: licenceExpiryController,
-                                      ),
+                                      )
+                                          : Text('Licence Expiry: ${licenceExpiryController.text}',),
                                     ),
                                     const Spacer(),
-                                    empLicNumExpImage == null? const Icon(Icons.warning, color: Colors.red,):
-                                    const Icon(Icons.done, color: Colors.green,),
-                                    const Spacer(),
-                                    isEditable? SizedBox(
+                                    isEditable
+                                        ? SizedBox(
                                       width: 140,
                                       child: ElevatedButton(
-                                          onPressed: () async {
-                                            empDriPhvExpImage = await _imagePicker();
-                                            setState(() {
-            
-                                            });
-                                          },
-                                          child: const Text('Licence Pic'))
-                                    ):Container()
+                                        onPressed: () async {
+                                          empDriPhvExpImage = await _imagePicker();
+                                          setState(() {});
+                                        },
+                                        child: const Text('Licence Pic'),
+                                      ),
+                                    )
+                                        : Container(),
                                   ],
                                 ),
-                              ),
-            
-            
-            
-            
-            
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('PHV NUMBER'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Phv Number',
-                                  ),
-                                  controller: phvNumberController,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
+                                const SizedBox(height: 12),
+                                Row(
                                   children: [
                                     SizedBox(
                                       height: 45,
                                       width: 150,
-                                      child: TextFormField(
-                                  enabled: isEditable,
+                                      child: isEditable
+                                          ? TextFormField(
                                         keyboardType: TextInputType.datetime,
                                         onTap: () async {
                                           DateTime? dt = await showDatePicker(
                                               context: context,
                                               firstDate: DateTime(2000),
                                               lastDate: DateTime(2100));
-                                          if(dt!=null){
-                                            phvExpiryController.text = DateFormat('dd-MM-yyyy').format(dt);
+                                          if (dt != null) {
+                                            phvExpiryController.text =
+                                                DateFormat('dd-MM-yyyy').format(dt);
                                           }
                                         },
                                         validator: (value) {
@@ -606,84 +505,42 @@ class _MyProfileState extends State<MyProfile> {
                                           labelText: 'Phv Expiry',
                                         ),
                                         controller: phvExpiryController,
-                                      ),
+                                      )
+                                          : Text(
+                                        'Phv Expiry: ${phvExpiryController.text}'),
                                     ),
                                     const Spacer(),
-                                    empDriPhvExpImage == null? const Icon(Icons.warning, color: Colors.red,):
-                                    const Icon(Icons.done, color: Colors.green,),
-                                    const Spacer(),
-                                    isEditable? SizedBox(
+                                    isEditable
+                                        ? SizedBox(
                                       width: 140,
                                       child: ElevatedButton(
-                                          onPressed: () async {
-                                            empDriPhvExpImage = await _imagePicker();
-                                            setState(() {
-            
-                                            });
-                                          },
-                                          child: const Text('Phv Badge')),
-                                    ):Container()
+                                        onPressed: () async {
+                                          empDriPhvExpImage = await _imagePicker();
+                                          setState(() {});
+                                        },
+                                        child: const Text('Phv Badge'),
+                                      ),
+                                    )
+                                        : Container(),
                                   ],
                                 ),
-                              ),
-            
-            
-            
-            
-            
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('PASSPORT NUMBER'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Passport Number',
-                                  ),
-                                  controller: passportNumberController,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
+                                const SizedBox(height: 12),
+                                Row(
                                   children: [
                                     SizedBox(
                                       height: 45,
                                       width: 150,
-                                      child: TextFormField(
-                                  enabled: isEditable,
+                                      child: isEditable
+                                          ? TextFormField(
                                         keyboardType: TextInputType.datetime,
                                         onTap: () async {
                                           DateTime? dt = await showDatePicker(
                                               context: context,
                                               firstDate: DateTime(2000),
                                               lastDate: DateTime(2100));
-                                          if(dt!=null){
-                                            passportExpiryController.text = DateFormat('dd-MM-yyyy').format(dt);
+                                          if (dt != null) {
+                                            passportExpiryController.text =
+                                                DateFormat('dd-MM-yyyy').format(dt);
                                           }
                                         },
                                         validator: (value) {
@@ -699,82 +556,41 @@ class _MyProfileState extends State<MyProfile> {
                                           labelText: 'Passport Expiry',
                                         ),
                                         controller: passportExpiryController,
-                                      ),
+                                      )
+                                          : Text('Passport Expiry: ${passportExpiryController.text}'),
                                     ),
                                     const Spacer(),
-                                    empPassportExpImage == null? const Icon(Icons.warning, color: Colors.red,):
-                                    const Icon(Icons.done, color: Colors.green,),
-                                    const Spacer(),
-                                    isEditable? SizedBox(
+                                    isEditable
+                                        ? SizedBox(
                                       width: 140,
                                       child: ElevatedButton(
-                                          onPressed: () async {
-                                            empPassportExpImage = await _imagePicker();
-                                            setState(() {
-            
-                                            });
-                                          },
-                                          child: const Text('Passport')),
-                                    ): Container()
+                                        onPressed: () async {
+                                          empPassportExpImage = await _imagePicker();
+                                          setState(() {});
+                                        },
+                                        child: const Text('Passport'),
+                                      ),
+                                    )
+                                        : Container(),
                                   ],
                                 ),
-                              ),
-            
-            
-            
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    AppLocalizations.of('BIOMETRIC NUMBER'),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  enabled: isEditable,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'This Field is Required!';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    labelText: 'Biometric Number',
-                                  ),
-                                  controller: biometricNumberController,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
+                                const SizedBox(height: 12),
+                                Row(
                                   children: [
                                     SizedBox(
                                       height: 45,
                                       width: 150,
-                                      child: TextFormField(
-                                  enabled: isEditable,
+                                      child: isEditable
+                                          ? TextFormField(
                                         keyboardType: TextInputType.datetime,
                                         onTap: () async {
                                           DateTime? dt = await showDatePicker(
                                               context: context,
                                               firstDate: DateTime(2000),
                                               lastDate: DateTime(2100));
-                                          if(dt!=null){
-                                            biometricExpiryController.text = DateFormat('dd-MM-yyyy').format(dt);
+                                          if (dt != null) {
+                                            biometricExpiryController.text =
+                                                DateFormat('dd-MM-yyyy').format(dt);
                                           }
                                         },
                                         validator: (value) {
@@ -787,48 +603,31 @@ class _MyProfileState extends State<MyProfile> {
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(15),
                                           ),
-                                          labelText: 'Passport Expiry',
+                                          labelText: 'Biometric Expiry',
                                         ),
                                         controller: biometricExpiryController,
-                                      ),
+                                      )
+                                          : Text('Biometric Expiry: ${biometricExpiryController.text}',),
                                     ),
                                     const Spacer(),
-                                    empBiometricExpImage == null? const Icon(Icons.warning, color: Colors.red,):
-                                    const Icon(Icons.done, color: Colors.green,),
-                                    const Spacer(),
-                                    isEditable? SizedBox(
+                                    isEditable
+                                        ? SizedBox(
                                       width: 140,
                                       child: ElevatedButton(
-                                          onPressed: () async {
-                                            empBiometricExpImage = await _imagePicker();
-                                            setState(() {
-            
-                                            });
-                                          },
-                                          child: const Text('Biometric')),
-                                    ):Container()
+                                        onPressed: () async {
+                                          empBiometricExpImage = await _imagePicker();
+                                          setState(() {});
+                                        },
+                                        child: const Text('Biometric'),
+                                      ),
+                                    )
+                                        : Container(),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                AppLocalizations.of('ADDRESS'),
-                                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).disabledColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          SizedBox(
-                            height: 100,
-                            child: TextFormField(
+                              ],
+                            ),
+                            SizedBox(height: 10,),
+                            TextFormField(
                               enabled: isEditable,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -846,17 +645,14 @@ class _MyProfileState extends State<MyProfile> {
                               maxLines: null, // Set to null or any value greater than 1 for multiple lines
                               controller: addressController,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                        ],
+                            const SizedBox(height: 12),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ),
+              )
           ),
         ],
       ),

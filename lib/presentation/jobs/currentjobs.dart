@@ -241,7 +241,7 @@ class _CurrentJobsState extends State<CurrentJobs> {
                                     ),
                                     Text(
                                       AppLocalizations.of(item.pickupadress),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context).textTheme.titleLarge!.color,
                                       ),
@@ -278,7 +278,7 @@ class _CurrentJobsState extends State<CurrentJobs> {
                                     ),
                                     Text(
                                       AppLocalizations.of(item.dropaddress),
-                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context).textTheme.titleLarge!.color,
                                       ),

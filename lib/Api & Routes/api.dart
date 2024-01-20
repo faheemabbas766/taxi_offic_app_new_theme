@@ -702,8 +702,8 @@ class API {
       await request.send().timeout(const Duration(seconds: 25), onTimeout: () {
         throw "TimeOut";
       });
-      var responsed = await http.Response.fromStream(response);if (
-      response.statusCode == 401){
+      var responsed = await http.Response.fromStream(response);
+      if (response.statusCode == 401){
         SharedPreferences.getInstance().then((prefs) {
           prefs.clear();
         });
@@ -799,12 +799,13 @@ class API {
     distance = distance*1000;
     Duration timeDifference = DateTime.now().difference(ptime);
     int secondsDifference = timeDifference.inSeconds;
-    int j = -1;
+    int j = 0;
     if (distance <= 0.001) {
       speed = 10;
     } else {
       speed = secondsDifference != 0 ? (distance/secondsDifference).round() : 0;
       j= speed;
+      print('Token::::::::${Provider.of<HomePro>(context, listen: false).token}');
       print('Speed::::::::$j');
       plat = pos.latitude;
       plon = pos.longitude;

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../main.dart';
 import '../Language/appLocalizations.dart';
-import '../constance/constance.dart';
 import '../drawer/drawer.dart';
 import '../appTheme.dart';
-import 'myProfile.dart';
 import '../constance/constance.dart' as constance;
 
 class SettingScreen extends StatefulWidget {
@@ -49,7 +47,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   height: 1,
                   color: Theme.of(context).dividerColor,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 InkWell(
@@ -135,14 +133,14 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Container(
                   height: 1,
                   color: Theme.of(context).dividerColor,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 InkWell(
@@ -181,6 +179,7 @@ class _SettingScreenState extends State<SettingScreen> {
         selectFifthColor = false;
         selectSixthColor = false;
       });
+
       MyApp.setCustomTheme(context, 0);
     }
   }
@@ -299,7 +298,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           radius: 32,
                           child: Text(
                             AppLocalizations.of('Light'),
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
@@ -318,14 +317,14 @@ class _SettingScreenState extends State<SettingScreen> {
                           radius: 32,
                           child: Text(
                             AppLocalizations.of('Dark'),
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
@@ -339,9 +338,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       },
                       child: CircleAvatar(
                         radius: 14,
-                        backgroundColor: Color(0xFFEB1165),
+                        backgroundColor: Color(0xFFe6230e),
                         child: !selectFirstColor
-                            ? CircleAvatar(
+                            ? const CircleAvatar(
                           radius: 6,
                           backgroundColor: Colors.white,
                         )
@@ -361,7 +360,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         radius: 14,
                         backgroundColor: Color(0xFF32a852),
                         child: selectSecondColor
-                            ? CircleAvatar(
+                            ? const CircleAvatar(
                           radius: 6,
                           backgroundColor: Colors.white,
                         )
@@ -379,9 +378,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       },
                       child: CircleAvatar(
                         radius: 14,
-                        backgroundColor: Color(0xFFe6230e),
+                        backgroundColor: const Color(0xFFEB1165),
                         child: selectThirdColor
-                            ? CircleAvatar(
+                            ? const CircleAvatar(
                           radius: 6,
                           backgroundColor: Colors.white,
                         )
@@ -401,7 +400,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         radius: 14,
                         backgroundColor: Color(0xFF760ee6),
                         child: selectFourthColor
-                            ? CircleAvatar(
+                            ? const CircleAvatar(
                           radius: 6,
                           backgroundColor: Colors.white,
                         )
@@ -419,9 +418,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       },
                       child: CircleAvatar(
                         radius: 14,
-                        backgroundColor: Color(0xFFdb0ee6),
+                        backgroundColor: Color(0xFFA9A9A9),
                         child: selectFifthColor
-                            ? CircleAvatar(
+                            ? const CircleAvatar(
                           radius: 6,
                           backgroundColor: Colors.white,
                         )
@@ -439,9 +438,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       },
                       child: CircleAvatar(
                         radius: 14,
-                        backgroundColor: Color(0xFFdb164e),
+                        backgroundColor: const Color(0xFFFF5733),
                         child: selectSixthColor
-                            ? CircleAvatar(
+                            ? const CircleAvatar(
                           radius: 6,
                           backgroundColor: Colors.white,
                         )
@@ -588,57 +587,57 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
           ),
 
-          InkWell(
-            onTap: (){
-              openShowPopupLanguage();
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    height: 26,
-                    width: 26,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: HexColor("#0078FF"),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(4),
-                      child: Icon(
-                        FontAwesomeIcons.globeAsia,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                  Text(
-                    AppLocalizations.of('Language'),
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleLarge!.color,
-                    ),
-                  ),
-                  const Expanded(child: SizedBox()),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 18,
-                    color: Theme.of(context).disabledColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 60),
-            child: Container(
-              height: 1,
-              color: Theme.of(context).dividerColor,
-            ),
-          ),
+          // InkWell(
+          //   onTap: (){
+          //     openShowPopupLanguage();
+          //   },
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
+          //     child: Row(
+          //       children: <Widget>[
+          //         Container(
+          //           height: 26,
+          //           width: 26,
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(6),
+          //             color: HexColor("#0078FF"),
+          //           ),
+          //           child: const Padding(
+          //             padding: EdgeInsets.all(4),
+          //             child: Icon(
+          //               FontAwesomeIcons.globeAsia,
+          //               color: Colors.white,
+          //               size: 16,
+          //             ),
+          //           ),
+          //         ),
+          //         const SizedBox(
+          //           width: 16,
+          //         ),
+          //         Text(
+          //           AppLocalizations.of('Language'),
+          //           style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          //             fontWeight: FontWeight.bold,
+          //             color: Theme.of(context).textTheme.titleLarge!.color,
+          //           ),
+          //         ),
+          //         const Expanded(child: SizedBox()),
+          //         Icon(
+          //           Icons.arrow_forward_ios,
+          //           size: 18,
+          //           color: Theme.of(context).disabledColor,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 60),
+          //   child: Container(
+          //     height: 1,
+          //     color: Theme.of(context).dividerColor,
+          //   ),
+          // ),
 
           Padding(
             padding: const EdgeInsets.only(right: 10, left: 14, top: 8, bottom: 8),
@@ -717,7 +716,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     color: Theme.of(context).textTheme.titleLarge!.color,
                   ),
                 ),
-                Expanded(child: SizedBox()),
+                const Expanded(child: SizedBox()),
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 18,
@@ -775,68 +774,6 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
 
         ],
-      ),
-    );
-  }
-
-  Widget myProfileDetail() {
-    return InkWell(
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyProfile(),
-          ),
-        );
-      },
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10, left: 14, top: 10, bottom: 10),
-          child: Row(
-            children: <Widget>[
-              CircleAvatar(
-                radius: 30,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: Image.asset(
-                    ConstanceData.user3,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 16,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    AppLocalizations.of('Esther Berry'),
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.titleLarge!.color,
-                        ),
-                  ),
-                  Text(
-                    AppLocalizations.of('5 mutual friends'),
-                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).disabledColor,
-                        ),
-                  ),
-                ],
-              ),
-              Expanded(child: SizedBox()),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 18,
-                color: Theme.of(context).disabledColor,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

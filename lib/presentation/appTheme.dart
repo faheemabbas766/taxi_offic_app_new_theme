@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constance/constance.dart' as constance;
 
 class AppTheme {
-  static bool isLightTheme = true;
+  static bool isLightTheme = constance.isLightTheme;
 
   static TextTheme _buildTextTheme(TextTheme base) {
     return base.copyWith(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_app/pages/add_booking.dart';
+import 'package:taxi_app/presentation/jobs/add_booking.dart';
 import 'package:taxi_app/pages/home.dart';
 import 'package:taxi_app/pages/tripdetails.dart';
 import 'package:taxi_app/presentation/vehicalManagement/vehicalmanagementScreen.dart';
@@ -77,6 +77,7 @@ var routes = <String, WidgetBuilder>{
   Routes.ACCOUNT: (BuildContext context) => MyProfile(),
   Routes.LOGIN: (BuildContext context) => LoginScreen(),
   Routes.JOBS: (BuildContext context) => JobView(),
+  Routes.ADDJOB: (BuildContext context) => AddBookingScreen(),
 };
 class Routes {
   static const String SPLASH = "/";
@@ -90,4 +91,5 @@ class Routes {
   static const String SETTING = "/setting/settingScreen";
   static const String ACCOUNT = "/setting/myProfile";
   static const String JOBS = "/jobs/jobview.dart";
+  static const String ADDJOB = "/jobs/add_booking.dart";
 }
